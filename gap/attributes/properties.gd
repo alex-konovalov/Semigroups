@@ -102,3 +102,5 @@ DeclareProperty("IsSurjectiveSemigroup", IsSemigroup);
 InstallTrueMethod(IsSurjectiveSemigroup, IsRegularSemigroup);
 InstallTrueMethod(IsSurjectiveSemigroup, IsMonoidAsSemigroup);
 InstallTrueMethod(IsSurjectiveSemigroup, IsIdempotentGenerated);
+
+DeclareProperty("IsCryptoGroup", IsSemigroup);
