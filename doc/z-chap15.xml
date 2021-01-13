@@ -23,6 +23,7 @@
     <#Include Label = "IsCommutativeSemigroup">
     <#Include Label = "IsCompletelyRegularSemigroup">
     <#Include Label = "IsCongruenceFreeSemigroup">
+    <#Include Label = "IsCryptoGroup">
     <#Include Label = "IsSurjectiveSemigroup">
     <#Include Label = "IsGroupAsSemigroup">
     <#Include Label = "IsIdempotentGenerated">
