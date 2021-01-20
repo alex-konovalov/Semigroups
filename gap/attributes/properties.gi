@@ -1794,8 +1794,8 @@ function(S)
   H := GreensHRelation(S);
   PairsInHRelation := [];
   NrH := NrHClasses(S);
-  for A in EquivalenceClasses(H) do  #create a list of pairs generating 
-                                     #Greens-H relation as an equivalence relation.
+#create a list of pairs generating Greens H-relation as an equiv. relation.
+  for A in EquivalenceClasses(H) do
     for s in A do
       Add(PairsInHRelation, [s, Representative(A)]);
     od;
@@ -1804,7 +1804,9 @@ function(S)
   C := SemigroupCongruence(S, gens);
   LookUp := EquivalenceRelationCanonicalLookup(C);
   for pair in PairsInHRelation do
-    if not LookUp[PositionCanonical(S, pair[1])]=LookUp[PositionCanonical(S, pair[2])] then
+    pos1 := LookUp[PositionCanonical(S, pair[1])];
+    pos2 := LookUp[PositionCanonical(S, pair[2])];
+    if not pos1=pos2 then
       Add(gens, pair);
       C := SemigroupCongruence(S, gens);
       if NrCongruenceClasses(C)<NrH then
