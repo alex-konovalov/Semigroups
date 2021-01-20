@@ -1953,9 +1953,9 @@ gap> IsCryptoGroup(S);
 true
 
 #IsCryptoGroup, for a Rees Matrix semigroup
-gap> G:=SymmetricGroup(5);;
-gap> M:=[[(1,2),(2,4)],[(1,4),(1,2,3,4,5)]];;
-gap> R:=ReesMatrixSemigroup(G,M);;
+gap> G := SymmetricGroup(5);;
+gap> M := [[(1, 2), (2, 4)], [(1, 4), (1, 2, 3, 4, 5)]];;
+gap> R := ReesMatrixSemigroup(G, M);;
 gap> IsCryptoGroup(R);
 true
 
