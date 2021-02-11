@@ -1961,7 +1961,7 @@ true
 
 # SEMIGROUPS_UnbindVariables
 gap> Unbind(D);
-gap> Unbind(I);
+gap> Unbind(I); 
 gap> Unbind(G);
 gap> Unbind(J);
 gap> Unbind(M);
