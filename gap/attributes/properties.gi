@@ -1787,7 +1787,7 @@ S -> IsEmpty(IndecomposableElements(S)));
 
 InstallMethod(IsCryptoGroup, "for a semigroup", [IsSemigroup],
 function(S)
-  local H, A, s, C, gens, PairsInHRelation, NrH, LookUp, pair;
+  local H, A, s, C, gens, PairsInHRelation, NrH, LookUp, pair, pos1, pos2;
   if not IsCompletelyRegularSemigroup(S) then
     return false;
   fi;
