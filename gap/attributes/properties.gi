@@ -1784,3 +1784,36 @@ x -> UnderlyingSemigroupOfSemigroupWithAdjoinedZero(x) <> fail);
 InstallMethod(IsSurjectiveSemigroup, "for a semigroup",
 [IsSemigroup],
 S -> IsEmpty(IndecomposableElements(S)));
+
+InstallMethod(IsCryptoGroup, "for a semigroup", [IsSemigroup],
+function(S)
+  local H, A, s, C, gens, PairsInHRelation, NrH, LookUp, pair, pos1, pos2;
+  if not IsCompletelyRegularSemigroup(S) then
+    return false;
+  fi;
+  H := GreensHRelation(S);
+  PairsInHRelation := [];
+  NrH := NrHClasses(S);
+  # create a list of pairs generating Greens H-relation as an equiv. relation.
+  for A in EquivalenceClasses(H) do
+    for s in A do
+      Add(PairsInHRelation, [s, Representative(A)]);
+    od;
+  od;
+  gens := [];
+  C := SemigroupCongruence(S, gens);
+  LookUp := EquivalenceRelationCanonicalLookup(C);
+  for pair in PairsInHRelation do
+    pos1 := LookUp[PositionCanonical(S, pair[1])];
+    pos2 := LookUp[PositionCanonical(S, pair[2])];
+    if not pos1 = pos2 then
+      Add(gens, pair);
+      C := SemigroupCongruence(S, gens);
+      if NrCongruenceClasses(C) < NrH then
+        return false;
+      fi;
+      LookUp := EquivalenceRelationCanonicalLookup(C);
+    fi;
+  od;
+  return true;
+end);

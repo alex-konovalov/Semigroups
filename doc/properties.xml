@@ -1194,3 +1194,44 @@ false]]></Example>
     </Description>
   </ManSection>
 <#/GAPDoc>
+
+<#GAPDoc Label="IsCryptoGroup">
+  <ManSection>
+    <Prop Name="IsCryptoGroup" Arg="S"/>
+    <Returns><K>true</K> or <K>false</K>.</Returns>
+    <Description>
+      A semigroup <A>S</A> is a <E>crypto group</E> if it is completely regular and 
+      Green's H-relation is a congruence. 
+      <C>IsCryptoGroup(<A>S</A>)</C> returns <K>true</K> if the
+      semigroup <A>S</A> is a crypto group, and <K>false</K> if it is not. <P/>
+
+      <Example><![CDATA[
+gap> G := SymmetricGroup(5);;
+gap> M := [[(1, 2), (2, 4)], [(1, 4), (1, 2, 3, 4, 5)]];;
+gap> R := ReesMatrixSemigroup(G, M);;
+gap> IsCryptoGroup(R);
+true
+gap> S := FullTransformationMonoid(2);;
+gap> IsCryptoGroup(S);
+false
+gap> G1 := AlternatingGroup(4);;
+gap> G2 := SymmetricGroup(3);;
+gap> G3 := AlternatingGroup(5);;
+gap> gr := Digraph([[1, 3], [2, 3], [3]]);;
+gap> sgn := function(x)
+> if SignPerm(x) = 1 then
+> return ();
+> fi;
+> return (1, 2);
+> end;;
+gap> hom13 := GroupHomomorphismByFunction(G1, G3, sgn);;
+gap> hom23 := GroupHomomorphismByFunction(G2, G3, sgn);;
+gap> S := AsSemigroup(IsPartialPermSemigroup,
+> gr,
+> [G1, G2, G3], [[1, 3, hom13], [2, 3, hom23]]);;
+gap> IsCryptoGroup(S);
+true]]></Example>
+    </Description>
+  </ManSection>
+<#/GAPDoc>
+
