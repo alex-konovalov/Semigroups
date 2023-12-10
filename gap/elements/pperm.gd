@@ -9,3 +9,4 @@
 ##
 
 DeclareAttribute("CyclesOfPartialPerm", IsPartialPerm);
+DeclareOperation("UniformRandomPartialPerm", [IsPosInt]);
