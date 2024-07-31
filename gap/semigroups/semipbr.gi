@@ -15,21 +15,19 @@
 ## ?. Random
 #############################################################################
 
-InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
-[IsPBRSemigroup, IsList],
-{filt, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsSemigroup, params));
+InstallMethod(SEMIGROUPS_ProcessRandomArgsCons, [IsPBRSemigroup, IsList],
+{_, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsSemigroup, params));
 
-InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
-[IsPBRMonoid, IsList],
-{filt, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsSemigroup, params));
+InstallMethod(SEMIGROUPS_ProcessRandomArgsCons, [IsPBRMonoid, IsList],
+{_, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsSemigroup, params));
 
 InstallMethod(RandomSemigroupCons, "for IsPBRSemigroup and a list",
 [IsPBRSemigroup, IsList],
-{filt, params} -> Semigroup(List([1 .. params[1]], i -> RandomPBR(params[2]))));
+{_, params} -> Semigroup(List([1 .. params[1]], i -> RandomPBR(params[2]))));
 
 InstallMethod(RandomMonoidCons, "for IsPBRMonoid and a list",
 [IsPBRMonoid, IsList],
-{filt, params} -> Monoid(List([1 .. params[1]], i -> RandomPBR(params[2]))));
+{_, params} -> Monoid(List([1 .. params[1]], i -> RandomPBR(params[2]))));
 
 InstallMethod(RandomInverseSemigroupCons, "for IsPBRSemigroup and a list",
 [IsPBRSemigroup, IsList], SEMIGROUPS.DefaultRandomInverseSemigroup);
@@ -48,8 +46,8 @@ function(S)
                        "\<\< ");
 end);
 
-InstallMethod(DegreeOfPBRSemigroup, "for a PBR semigroup", [IsPBRSemigroup],
-S -> DegreeOfPBR(Representative(S)));
+InstallMethod(DegreeOfPBRSemigroup, "for a PBR semigroup",
+[IsPBRSemigroup], S -> DegreeOfPBR(Representative(S)));
 
 # fall back method via a transformation semigroup
 
@@ -124,10 +122,9 @@ function(_, S)
                                           AsTransformation);
 end);
 
-InstallMethod(IsomorphismMonoid,
-"for IsPBRMonoid and a pbr monoid",
+InstallMethod(IsomorphismMonoid, "for IsPBRMonoid and a pbr monoid",
 [IsPBRMonoid, IsPBRMonoid],
-{filter, S} -> SemigroupIsomorphismByFunctionNC(S, S, IdFunc, IdFunc));
+{_, S} -> SemigroupIsomorphismByFunctionNC(S, S, IdFunc, IdFunc));
 
 InstallMethod(\<, "for pbr semigroups",
 [IsPBRSemigroup, IsPBRSemigroup],

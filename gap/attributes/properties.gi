@@ -638,7 +638,7 @@ function(S)
         Append(new, Idempotents(S, i));
       od;
     fi;
-    if IsEmpty(new) then
+    if new = [] then
       return false;
     fi;
     T := Semigroup(new, rec(acting := true));
@@ -736,7 +736,7 @@ function(S)
   val := lambda(gens[1]);
 
   for x in gens do
-    if lambda(x) <> val then
+    if not lambda(x) = val then
       return false;
     fi;
   od;
@@ -1389,7 +1389,9 @@ function(S)
 
     for f in gens do
       o := Orb(S, LambdaFunc(S)(f), LambdaAct(S), opts);
-      pos := LookForInOrb(o, {o, x} -> LambdaRank(S)(x) < rank, 1);
+      pos := LookForInOrb(o, function(_, x)
+                               return LambdaRank(S)(x) < rank;
+                             end, 1);
       if pos <> false then
         return false;
       fi;

@@ -97,11 +97,8 @@ end);
 # in the collection does not satisfy IsGeneratorsOfInverseSemigroup, and so it
 # cannot be inverted.
 
-InstallMethod(InverseMonoidByGenerators,
-[IsPBRCollection],
-function(_)
-  ErrorNoReturn("not yet implemented");
-end);
+InstallMethod(InverseMonoidByGenerators, "for a PBR coll", [IsPBRCollection],
+_ -> ErrorNoReturn("not yet implemented"));
 
 # See the comment above, this is not really correct.
 
@@ -145,8 +142,7 @@ function(coll)
 end);
 
 InstallMethod(IsBipartitionPBR, "for a pbr",
-[IsPBR],
-x -> IsEquivalenceBooleanMat(AsBooleanMat(x)));
+[IsPBR], x -> IsEquivalenceBooleanMat(AsBooleanMat(x)));
 
 InstallMethod(IsTransformationPBR, "for a pbr",
 [IsPBR],
@@ -169,32 +165,25 @@ function(x)
   return true;
 end);
 
-InstallMethod(IsBlockBijectionPBR, "for a pbr",
-[IsPBR],
+InstallMethod(IsBlockBijectionPBR, "for a pbr", [IsPBR],
 x -> IsBipartitionPBR(x) and IsBlockBijection(AsBipartition(x)));
 
-InstallMethod(IsPartialPermPBR, "for a pbr",
-[IsPBR],
+InstallMethod(IsPartialPermPBR, "for a pbr", [IsPBR],
 x -> IsBipartitionPBR(x) and IsPartialPermBipartition(AsBipartition(x)));
 
-InstallMethod(IsPermPBR, "for a pbr",
-[IsPBR],
+InstallMethod(IsPermPBR, "for a pbr", [IsPBR],
 x -> IsBipartitionPBR(x) and IsPermBipartition(AsBipartition(x)));
 
-InstallMethod(IsDualTransformationPBR, "for a pbr",
-[IsPBR],
+InstallMethod(IsDualTransformationPBR, "for a pbr", [IsPBR],
 x -> IsBipartitionPBR(x) and IsDualTransBipartition(AsBipartition(x)));
 
-InstallMethod(NumberPBR, "for a pbr",
-[IsPBR],
+InstallMethod(NumberPBR, "for a pbr", [IsPBR],
 x -> NumberBooleanMat(AsBooleanMat(x)));
 
-InstallMethod(PBRNumber, "for pos int and pos int",
-[IsPosInt, IsPosInt],
+InstallMethod(PBRNumber, "for pos int and pos int", [IsPosInt, IsPosInt],
 {nr, deg} -> AsPBR(BooleanMatNumber(nr, 2 * deg)));
 
-InstallMethod(IsEmptyPBR, "for a partition binary relation",
-[IsPBR],
+InstallMethod(IsEmptyPBR, "for a partition binary relation", [IsPBR],
 function(x)
   local n, i;
 
@@ -207,8 +196,7 @@ function(x)
   return true;
 end);
 
-InstallMethod(IsIdentityPBR, "for a partition binary relation",
-[IsPBR],
+InstallMethod(IsIdentityPBR, "for a partition binary relation", [IsPBR],
 function(x)
   local n, i;
 
@@ -284,8 +272,10 @@ x -> AsPBR(x, DegreeOfTransformation(x)));
 InstallMethod(AsPBR, "for a multiplicative element",
 [IsMultiplicativeElement], x -> AsPBR(AsBipartition(x)));
 
-InstallMethod(AsPBR, "for a multiplicative element and pos int",
-[IsMultiplicativeElement, IsPosInt], {x, n} -> AsPBR(AsBipartition(x, n)));
+InstallMethod(AsPBR,
+"for a multiplicative element and pos int",
+[IsMultiplicativeElement, IsPosInt],
+{x, n} -> AsPBR(AsBipartition(x, n)));
 
 # TODO(later) The following doesn't define a monoid embedding of P_n into
 # PBR_n. What is a monoid embedding from P_n to PBR_n?
@@ -488,7 +478,7 @@ function(left, right)
 end);
 
 InstallGlobalFunction(PBRNC,
-function(arg...)
+function(arg)
   local left, right, n, i, j;
 
   arg   := StructuralCopy(arg);
@@ -679,20 +669,14 @@ function(x)
   Append(str, "\>\>");
   Append(str, PrintString(ext[2]));
   Append(str, "\<\<\<\<)");
-
-  # print empty lists with two spaces for consistency
-  # see https://github.com/gap-system/gap/pull/5418
-  return ReplacedString(str, "[ ]", "[  ]");
+  return str;
 end);
 
 InstallMethod(String, "for a pbr", [IsPBR],
 function(x)
-  local ext, str;
+  local ext;
   ext := ExtRepOfObj(x);
-  str := Concatenation("PBR(", String(ext[1]), ", ", String(ext[2]), ")");
-  # print empty lists with two spaces for consistency
-  # see https://github.com/gap-system/gap/pull/5418
-  return ReplacedString(str, "[ ]", "[  ]");
+  return Concatenation("PBR(", String(ext[1]), ", ", String(ext[2]), ")");
 end);
 
 InstallMethod(\=, "for pbrs", IsIdenticalObj,

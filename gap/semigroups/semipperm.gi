@@ -15,21 +15,21 @@
 ## Random
 #############################################################################
 
-InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
-[IsPartialPermSemigroup, IsList],
-{filt, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsSemigroup, params));
+InstallMethod(SEMIGROUPS_ProcessRandomArgsCons, [IsPartialPermSemigroup, IsList],
+{_, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsSemigroup, params));
 
-InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
-[IsPartialPermMonoid, IsList],
-{filt, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsSemigroup, params));
+InstallMethod(SEMIGROUPS_ProcessRandomArgsCons, [IsPartialPermMonoid, IsList],
+{_, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsSemigroup, params));
 
 InstallMethod(RandomSemigroupCons, "for IsPartialPermSemigroup and a list",
-[IsPartialPermSemigroup, IsList], {filt, params} ->
-Semigroup(List([1 .. params[1]], i -> RandomPartialPerm(params[2]))));
+[IsPartialPermSemigroup, IsList],
+{_, params}
+-> Semigroup(List([1 .. params[1]], i -> RandomPartialPerm(params[2]))));
 
 InstallMethod(RandomMonoidCons, "for IsPartialPermMonoid and a list",
-[IsPartialPermMonoid, IsList], {filt, params} ->
-Monoid(List([1 .. params[1]], i -> RandomPartialPerm(params[2]))));
+[IsPartialPermMonoid, IsList],
+{_, params}
+-> Monoid(List([1 .. params[1]], i -> RandomPartialPerm(params[2]))));
 
 InstallMethod(RandomInverseSemigroupCons,
 "for IsPartialPermSemigroup and a list",
@@ -75,12 +75,12 @@ end);
 InstallMethod(IsomorphismSemigroup,
 "for IsPartialPermSemigroup and a semigroup",
 [IsPartialPermSemigroup, IsSemigroup],
-{filt, S} -> IsomorphismPartialPermSemigroup(S));
+{_, S} -> IsomorphismPartialPermSemigroup(S));
 
 InstallMethod(IsomorphismMonoid,
 "for IsPartialPermMonoid and a semigroup",
 [IsPartialPermMonoid, IsSemigroup],
-{filt, S} -> IsomorphismPartialPermMonoid(S));
+{_, S} -> IsomorphismPartialPermMonoid(S));
 
 InstallMethod(IsomorphismPartialPermSemigroup,
 "for a bipartition semigroup with generators",
@@ -617,22 +617,15 @@ function(S, n)
   return DigraphNC(out);
 end);
 
-InstallMethod(ComponentRepresentatives,
-"for a partial perm or transf semigroup", [IsSemigroup],
+InstallMethod(ComponentRepsOfPartialPermSemigroup,
+"for a partial perm semigroup", [IsPartialPermSemigroup],
 function(S)
   local D, C;
-  if not (IsPartialPermSemigroup(S) or IsTransformationSemigroup(S)) then
-    TryNextMethod();
-  fi;
   D := DigraphMutableCopy(DigraphOfActionOnPoints(S));
   C := DigraphStronglyConnectedComponents(D).comps;
   DigraphRemoveLoops(QuotientDigraph(D, C));
   return List(DigraphSources(D), x -> DigraphVertexLabel(D, x)[1]);
 end);
-
-InstallMethod(ComponentRepsOfPartialPermSemigroup,
-"for a partial perm semigroup", [IsPartialPermSemigroup],
-ComponentRepresentatives);
 
 InstallMethod(ComponentsOfPartialPermSemigroup,
 "for a partial perm semigroup", [IsPartialPermSemigroup],

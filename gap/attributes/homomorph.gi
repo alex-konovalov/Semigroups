@@ -131,22 +131,24 @@ end);
 
 InstallMethod(SemigroupHomomorphismByImages, "for two semigroups and one list",
 [IsSemigroup, IsSemigroup, IsList],
-{S, T, imgs}
--> SemigroupHomomorphismByImages(S, T, GeneratorsOfSemigroup(S), imgs));
+{S, T, imgs} -> SemigroupHomomorphismByImages(S,
+                                              T,
+                                              GeneratorsOfSemigroup(S),
+                                              imgs));
 
 InstallMethod(SemigroupHomomorphismByImages, "for two semigroups",
 [IsSemigroup, IsSemigroup],
-function(S, T)
-  return SemigroupHomomorphismByImages(S,
-                                       T,
-                                       GeneratorsOfSemigroup(S),
-                                       GeneratorsOfSemigroup(T));
-end);
+{S, T} -> SemigroupHomomorphismByImages(S,
+                                        T,
+                                        GeneratorsOfSemigroup(S),
+                                        GeneratorsOfSemigroup(T)));
 
 InstallMethod(SemigroupHomomorphismByImages, "for a semigroup and two lists",
 [IsSemigroup, IsList, IsList],
-{S, gens, imgs}
--> SemigroupHomomorphismByImages(S, Semigroup(imgs), gens, imgs));
+{S, gens, imgs} -> SemigroupHomomorphismByImages(S,
+                                                 Semigroup(imgs),
+                                                 gens,
+                                                 imgs));
 
 InstallMethod(SemigroupIsomorphismByImages, "for two semigroup and two lists",
 [IsSemigroup, IsSemigroup, IsList, IsList],
@@ -178,17 +180,17 @@ end);
 
 InstallMethod(SemigroupIsomorphismByImages, "for two semigroups and one list",
 [IsSemigroup, IsSemigroup, IsList],
-{S, T, imgs}
--> SemigroupIsomorphismByImages(S, T, GeneratorsOfSemigroup(S), imgs));
+{S, T, imgs} -> SemigroupIsomorphismByImages(S,
+                                             T,
+                                             GeneratorsOfSemigroup(S),
+                                             imgs));
 
 InstallMethod(SemigroupIsomorphismByImages, "for two semigroups",
 [IsSemigroup, IsSemigroup],
-function(S, T)
-  return SemigroupIsomorphismByImages(S,
-                                      T,
-                                      GeneratorsOfSemigroup(S),
-                                      GeneratorsOfSemigroup(T));
-end);
+{S, T} -> SemigroupIsomorphismByImages(S,
+                                       T,
+                                       GeneratorsOfSemigroup(S),
+                                       GeneratorsOfSemigroup(T)));
 
 InstallMethod(SemigroupIsomorphismByImages, "for a semigroup and two lists",
 [IsSemigroup, IsList, IsList],
@@ -332,11 +334,11 @@ hom -> SemigroupIsomorphismByFunctionNC(Source(hom),
 # Methods for SHBI/SIBI/SHBF
 InstallMethod(IsSurjective, "for a semigroup homomorphism",
 [IsSemigroupHomomorphismByImagesOrFunction],
-{hom} -> Size(ImagesSource(hom)) = Size(Range(hom)));
+hom -> Size(ImagesSource(hom)) = Size(Range(hom)));
 
 InstallMethod(IsInjective, "for a semigroup homomorphism",
 [IsSemigroupHomomorphismByImagesOrFunction],
-{hom} -> Size(Source(hom)) = Size(ImagesSource(hom)));
+hom -> Size(Source(hom)) = Size(ImagesSource(hom)));
 
 InstallMethod(ImagesSet, "for a semigroup homom. and list of elements",
 [IsSemigroupHomomorphismByImagesOrFunction, IsList],
@@ -490,12 +492,12 @@ end);
 InstallMethod(String, "for a semigroup isom. by images",
 [IsSemigroupHomomorphismByImages and IsBijective],
 function(iso)
-  local mapi, str;
+  local mapi;
   if UserPreference("semigroups", "ViewObj") <> "semigroups-pkg" then
     TryNextMethod();
   fi;
   mapi := MappingGeneratorsImages(iso);
-  str := Concatenation("SemigroupIsomorphismByImages( ",
+  return Concatenation("SemigroupIsomorphismByImages( ",
                        String(Source(iso)),
                        ", ",
                        String(Range(iso)),
@@ -504,9 +506,6 @@ function(iso)
                        ", ",
                        String(mapi[2]),
                        " )");
-  # print empty lists with two spaces for consistency
-  # see https://github.com/gap-system/gap/pull/5418
-  return ReplacedString(str, "[ ]", "[  ]");
 end);
 
 InstallMethod(\=, "compare homom. by images", IsIdenticalObj,

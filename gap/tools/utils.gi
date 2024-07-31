@@ -108,7 +108,7 @@ SEMIGROUPS.StartTest := function()
                     "semigroups-pkg");
 
   # set default options
-  libsemigroups.set_report(false);
+  LIBSEMIGROUPS_REPORTING_ENABLED(false);
   return;
 end;
 

@@ -349,8 +349,7 @@ end);
 # same method for inverse ideals
 
 InstallMethod(RClassReps, "for an acting inverse semigroup rep",
-[IsInverseActingSemigroupRep],
-S -> List(LClassReps(S), Inverse));
+[IsInverseActingSemigroupRep], S -> List(LClassReps(S), Inverse));
 
 # same method for inverse ideals
 
@@ -429,15 +428,15 @@ InstallMethod(NrRClasses,
 
 InstallMethod(NrHClasses,
 "for a D-class of an inverse acting semigroup rep",
-[IsInverseActingRepGreensClass
- and IsGreensDClass], D -> Length(LambdaOrbSCC(D)) ^ 2);
+[IsInverseActingRepGreensClass and IsGreensDClass],
+D -> Length(LambdaOrbSCC(D)) ^ 2);
 
 # same method for inverse ideals
 
 InstallMethod(NrHClasses,
 "for an L-class of an inverse acting semigroup rep",
-[IsInverseActingRepGreensClass
- and IsGreensLClass], L -> Length(LambdaOrbSCC(L)));
+[IsInverseActingRepGreensClass and IsGreensLClass],
+L -> Length(LambdaOrbSCC(L)));
 
 # same method for inverse ideals
 

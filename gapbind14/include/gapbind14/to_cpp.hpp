@@ -21,6 +21,7 @@
 
 #include <cstddef>      // for size_t
 #include <string>       // for string
+#include <string_view>  // for string_view
 #include <type_traits>  // for enable_if_t, is_const, is_integral, is_same
 #include <vector>       // for vector
 
@@ -91,6 +92,30 @@ namespace gapbind14 {
                                  + TNAM_OBJ(o));
       }
       return std::string(CSTR_STRING(o), GET_LEN_STRING(o));
+    }
+  };
+
+  template <>
+  struct to_cpp<char const *> {
+    using cpp_type                          = char const *;
+    static gap_tnum_type constexpr gap_type = T_STRING;
+
+    char const *operator()(Obj o) const {
+      if (TNUM_OBJ(o) != T_STRING) {
+        throw std::runtime_error(std::string("expected string, found ")
+                                 + TNAM_OBJ(o));
+      }
+      return CSTR_STRING(o);
+    }
+  };
+
+  template <>
+  struct to_cpp<std::string_view> {
+    using cpp_type                          = char const *;
+    static gap_tnum_type constexpr gap_type = T_STRING;
+
+    std::string_view operator()(Obj o) const {
+      return to_cpp<char const *>()(o);
     }
   };
 

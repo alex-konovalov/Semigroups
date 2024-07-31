@@ -26,7 +26,7 @@ dnl ##
 AC_PROG_CXX
 AC_LANG([C++])
 
-AX_CXX_COMPILE_STDCXX_14(,[mandatory])
+AX_CXX_COMPILE_STDCXX_17(,[mandatory])
 
 dnl ##
 dnl ## Locate the GAP root dir

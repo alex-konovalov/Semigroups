@@ -76,19 +76,14 @@ extern Obj NrRows;
 extern Obj Matrix;
 
 namespace libsemigroups {
-  class FpSemigroup;
-  namespace congruence {
-    class ToddCoxeter;
-  }
+  class ToddCoxeter;
 }  // namespace libsemigroups
 
 namespace gapbind14 {
   template <>
-  struct IsGapBind14Type<libsemigroups::FpSemigroup> : std::true_type {};
-
-  template <>
-  struct IsGapBind14Type<libsemigroups::congruence::ToddCoxeter>
-      : std::true_type {};
+  struct IsGapBind14Type<libsemigroups::ToddCoxeter> : std::true_type {
+    static constexpr std::string_view name = "ToddCoxeter";
+  };
 
 }  // namespace gapbind14
 

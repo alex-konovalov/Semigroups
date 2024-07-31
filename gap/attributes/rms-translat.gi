@@ -46,8 +46,9 @@ SEMIGROUPS.RZMSTupleToLeftTranslation := function(S, idx_list, gp_list)
                         idx_list[x[1]],
                         gp_list[x[1]] * x[2],
                         x[3]);
+    else
+      return zero;
     fi;
-    return zero;
   end;
   return LeftTranslationNC(L, MappingByFunction(S, S, foo));
 end;
@@ -166,8 +167,7 @@ SEMIGROUPS.IsNormalRMSOverGroup := function(S)
 
   mat := Matrix(S);
   one := MultiplicativeNeutralElement(T);
-  return ForAll(mat[1], x -> x = one) and
-          ForAll(mat, x -> x[1] = one);
+  return ForAll(mat[1], x -> x = one) and ForAll(mat, x -> x[1] = one);
 end;
 
 # Hash translations by their underlying transformations
@@ -201,7 +201,7 @@ SEMIGROUPS.RZMSLinkedIndexFuncs := function(S)
       if j <> 0 then
         for mu in Li[j] do
           sigma[k + 1][mu] := Intersection(sigma[k][mu], Li[k]);
-          if IsEmpty(sigma[k][mu]) then
+          if Length(sigma[k][mu]) = 0 then
             failed := true;
             break;
           fi;
@@ -349,7 +349,7 @@ SEMIGROUPS.RZMSLinkedGroupFunctions := function(S, tau, sigma)
         fi;
       od;
       vals := keep;
-      if IsEmpty(vals) then
+      if Length(vals) = 0 then
         break;
       fi;
     od;
@@ -426,8 +426,8 @@ SEMIGROUPS.BitranslationsRZMS := function(H, opt...)
   return out;
 end;
 
-SEMIGROUPS.NormalRMSInitialisedLinkedFuncs :=
-function(S, G, mat, mat_inv_rows, c, d_inv, x, y)
+SEMIGROUPS.NormalRMSInitialisedLinkedFuncs := function(S, G, mat, mat_inv_rows,
+                                                       c, d_inv, x, y)
   local I, M, tau, sigma, g_pos, bt, out, mu;
 
   I           := Rows(S);

@@ -397,8 +397,7 @@ function(S)
   return out;
 end);
 
-InstallMethod(OrderEndomorphisms, "for a positive integer",
-[IsPosInt],
+InstallMethod(OrderEndomorphisms, "for a positive integer", [IsPosInt],
 function(n)
   local gens, S, i;
 
@@ -416,8 +415,7 @@ function(n)
   return S;
 end);
 
-InstallMethod(PartialOrderEndomorphisms, "for a positive integer",
-[IsPosInt],
+InstallMethod(PartialOrderEndomorphisms, "for a positive integer", [IsPosInt],
 function(n)
   local x, gens, S, i;
 
@@ -434,8 +432,7 @@ function(n)
   return S;
 end);
 
-InstallMethod(OrderAntiEndomorphisms, "for a positive integer",
-[IsPosInt],
+InstallMethod(OrderAntiEndomorphisms, "for a positive integer", [IsPosInt],
 function(n)
   local S;
   S := Monoid(OrderEndomorphisms(n), Transformation(Reversed([1 .. n])));

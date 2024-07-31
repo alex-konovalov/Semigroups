@@ -164,7 +164,9 @@ end);
 # InstallMethod(IsFinite,
 # "for a semigroup with CanUseGapFroidurePin and known generators",
 # [CanUseGapFroidurePin and HasGeneratorsOfSemigroup],
-# S -> Size(S) < infinity);
+# function(S)
+#   return Size(S) < infinity;
+# end);
 
 InstallMethod(AsSet,
 "for a semigroup with CanUseGapFroidurePin and known generators",
@@ -235,9 +237,10 @@ function(S)
 
   enum := rec();
 
-  # TODO Shouldn't S be stored in enum
+  # TODO store S in enum and use in NumberElement
   enum.NumberElement := {enum, x} -> PositionCanonical(S, x);
 
+  # TODO store S in enum and use it here
   enum.ElementNumber := function(_, nr)
     local fp;
     fp := GapFroidurePin(S);
@@ -252,13 +255,18 @@ function(S)
     return fail;
   end;
 
+  # TODO store S in enum and use it here
   enum.Length := enum -> Size(S);
 
-  enum.AsList := enum -> AsListCanonical(S);
+  # TODO store S in enum and use it here
+  enum.AsList := _ -> AsListCanonical(S);
 
+  # TODO store S in enum and use it here
   enum.Membership := {x, enum} -> PositionCanonical(S, x) <> fail;
 
-  enum.IsBound\[\] := {enum, nr} -> nr <= Length(enum);
+  enum.IsBound\[\] := function(enum, nr)
+    return nr <= Length(enum);
+  end;
 
   enum := EnumeratorByFunctions(S, enum);
   SetIsSemigroupEnumerator(enum, true);

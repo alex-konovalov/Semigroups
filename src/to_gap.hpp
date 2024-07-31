@@ -41,18 +41,18 @@
 #include "semigroups-debug.hpp"  // for SEMIGROUPS_ASSERT
 
 // gapbind14 headers
-#include "gapbind14/gapbind14.hpp"  // for gapbind14
+#include "gapbind14/to_gap.hpp"  // for gapbind14
 
 // libsemigroups headers
-#include "libsemigroups/adapters.hpp"   // for Degree
-#include "libsemigroups/bipart.hpp"     // for Bipartition, IsBipartition
-#include "libsemigroups/bmat8.hpp"      // for BMat8
-#include "libsemigroups/config.hpp"     // for LIBSEMIGROUPS_HPCOMBI_ENABLED
-#include "libsemigroups/constants.hpp"  // for NEGATIVE_INFINITY etc
-#include "libsemigroups/digraph.hpp"    // for ActionDigraph
-#include "libsemigroups/matrix.hpp"     // for matrix_threshold etc
-#include "libsemigroups/pbr.hpp"        // for PBR
-#include "libsemigroups/transf.hpp"     // for IsPPerm, IsTransf
+#include "libsemigroups/adapters.hpp"    // for Degree
+#include "libsemigroups/bipart.hpp"      // for Bipartition, IsBipartition
+#include "libsemigroups/bmat8.hpp"       // for BMat8
+#include "libsemigroups/config.hpp"      // for LIBSEMIGROUPS_HPCOMBI_ENABLED
+#include "libsemigroups/constants.hpp"   // for NEGATIVE_INFINITY etc
+#include "libsemigroups/matrix.hpp"      // for matrix_threshold etc
+#include "libsemigroups/pbr.hpp"         // for PBR
+#include "libsemigroups/transf.hpp"      // for IsPPerm, IsTransf
+#include "libsemigroups/word-graph.hpp"  // for WordGraph
 
 using libsemigroups::IsBMat;
 using libsemigroups::IsIntMat;
@@ -515,24 +515,24 @@ namespace gapbind14 {
   };
 
   ////////////////////////////////////////////////////////////////////////
-  // ActionDigraph
+  // WordGraph
   ////////////////////////////////////////////////////////////////////////
 
   template <typename T>
-  struct to_gap<libsemigroups::ActionDigraph<T>> {
-    using ActionDigraph_ = libsemigroups::ActionDigraph<T>;
-    Obj operator()(ActionDigraph_ const& ad) const noexcept {
-      using node_type = typename ActionDigraph_::node_type;
+  struct to_gap<libsemigroups::WordGraph<T>> {
+    using WordGraph_ = libsemigroups::WordGraph<T>;
+    Obj operator()(WordGraph_ const& ad) const noexcept {
+      using node_type = typename WordGraph_::node_type;
       Obj result      = NEW_PLIST(T_PLIST, ad.number_of_nodes());
       // this is intentionally not IMMUTABLE
-      // TODO(ActionDigraph) handle case of zero nodes?
+      // TODO(WordGraph) handle case of zero nodes?
       SET_LEN_PLIST(result, ad.number_of_nodes());
 
       for (size_t i = 0; i < ad.number_of_nodes(); ++i) {
         Obj next = NEW_PLIST(T_PLIST, 0);
         SET_LEN_PLIST(next, 0);
         for (size_t j = 0; j < ad.out_degree(); ++j) {
-          auto val = ad.unsafe_neighbor(i, j);
+          auto val = ad.target_no_checks(i, j);
           if (val != UNDEFINED) {
             AssPlist(next, j + 1, to_gap<node_type>()(val + 1));
           }
@@ -541,6 +541,24 @@ namespace gapbind14 {
         CHANGED_BAG(result);
       }
       return result;
+    }
+  };
+
+  // TODO could use magic_enum and make this generic
+  template <>
+  struct to_gap<libsemigroups::Order> {
+    Obj operator()(libsemigroups::Order const& val) const noexcept {
+      using order = libsemigroups::Order;
+      switch (val) {
+        case order::shortlex:
+          return to_gap<std::string>()("shortlex");
+        case order::lex:
+          return to_gap<std::string>()("lex");
+        case order::none:
+          return to_gap<std::string>()("none");
+        case order::recursive:
+          return to_gap<std::string>()("recursive");
+      }
     }
   };
 

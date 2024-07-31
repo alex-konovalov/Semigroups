@@ -163,8 +163,7 @@ function(type, mat)
   return Objectify(type, mat);
 end);
 
-InstallMethod(MatrixNC, "for a filter and list",
-[IsOperation, IsList],
+InstallMethod(MatrixNC, "for a filter and list", [IsOperation, IsList],
 {filter, mat} -> MatrixNC(SEMIGROUPS_TypeOfMatrixOverSemiringCons(filter), mat));
 
 InstallMethod(MatrixNC, "for a filter, list, function",
@@ -370,7 +369,7 @@ function(mat)
     return false;
   end;
 
-  iter.ShallowCopy := iter -> rec(pos := 0);
+  iter.ShallowCopy := _ -> rec(pos := 0);
 
   return IteratorByFunctions(iter);
 end);
@@ -658,7 +657,7 @@ InstallMethod(\=, "for matrices over a semiring",
  IsPlistMatrixOverSemiringPositionalRep],
 function(x, y)
   local n, i;
-  if SEMIGROUPS_FilterOfMatrixOverSemiring(x) <>
+  if not SEMIGROUPS_FilterOfMatrixOverSemiring(x) =
       SEMIGROUPS_FilterOfMatrixOverSemiring(y) then
     return false;
   fi;

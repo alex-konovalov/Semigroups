@@ -47,10 +47,6 @@ ReturnFalse);
 
 # TODO(later) remove CanUseLibsemigroupsCongruences?
 
-# A semigroup satisfies this property if its congruences should belong to
-# CanUseLibsemigroupsCongruence.
-DeclareProperty("CanUseLibsemigroupsCongruences", IsSemigroup);
-
 InstallTrueMethod(CanUseLibsemigroupsCongruences,
                   IsSemigroup and CanUseFroidurePin);
 InstallTrueMethod(CanUseLibsemigroupsCongruences,
@@ -121,11 +117,13 @@ function(S)
   return libsemigroups.Congruence.make_from_froidurepin_bmat;
 end);
 
-# Why does this work for types other than boolean matrices?
 InstallMethod(LibsemigroupsCongruenceConstructor,
 "for a matrix semigroup with CanUseLibsemigroupsCongruences",
 [IsMatrixOverSemiringSemigroup and CanUseLibsemigroupsCongruences],
-_ -> libsemigroups.Congruence.make_from_froidurepin_bmat);
+function(_)
+  # Why does this work for types other than boolean matrices?
+  return libsemigroups.Congruence.make_from_froidurepin_bmat;
+end);
 
 InstallMethod(LibsemigroupsCongruenceConstructor,
 "for a bipartition semigroup with CanUseLibsemigroupsCongruences",

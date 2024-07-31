@@ -21,7 +21,9 @@ function(G, X, Y, act)
     ErrorNoReturn("the 1st argument (a group) is not finite");
   fi;
 
-  anti_act := {pt, g} -> act(pt, g ^ -1);
+  anti_act := function(pt, g)
+    return act(pt, g ^ -1);
+  end;
 
   hom := ActionHomomorphism(G, DigraphVertices(X), anti_act);
 
@@ -36,7 +38,7 @@ function(G, X, Y, act)
   fi;
 
   # Check that Y is a semilattice and an induced subdigraph of X
-  if Y <> InducedSubdigraph(X, DigraphVertexLabels(Y)) then
+  if not Y = InducedSubdigraph(X, DigraphVertexLabels(Y)) then
     ErrorNoReturn("the 3rd argument <X> (a digraph) must be an induced ",
                   "subdigraph of the 2nd argument <Y> (a digraph) with ",
                   "vertex labels corresponding to the vertices of <X> on ",
@@ -121,8 +123,8 @@ InstallMethod(McAlisterTripleSemigroup,
 InstallMethod(McAlisterTripleSemigroup,
 "for a perm group, digraph, homogeneous list, and action",
 [IsGroup, IsDigraph, IsHomogeneousList, IsFunction],
-{G, X, sub_ver, act} ->
-  McAlisterTripleSemigroup(G, X, InducedSubdigraph(X, sub_ver), act));
+{G, X, sub_ver, act}
+-> McAlisterTripleSemigroup(G, X, InducedSubdigraph(X, sub_ver), act));
 
 InstallMethod(McAlisterTripleSemigroup,
 "for a perm group, digraph, and homogeneous list",
@@ -139,8 +141,7 @@ end);
 #############################################################################
 
 InstallMethod(OneImmutable, "for a McAlister triple semigroup element",
-[IsMcAlisterTripleSemigroupElement],
-x -> OneImmutable(MTSEParent(x)));
+[IsMcAlisterTripleSemigroupElement], x -> OneImmutable(MTSEParent(x)));
 
 InstallMethod(OneImmutable,
 "for a McAlister triple semigroup element collection",
@@ -299,7 +300,7 @@ function(S, T)
   # DigraphVertexLabels(YT) then we need to compose iso_x with an
   # automorphism of McAlisterTripleSemilattice(T). Composing this with
   # iso_x will restrict to an isomorphism from (the labels of) YS to YT.
-  if im_YS <> DigraphVertexLabels(YT) then
+  if not im_YS = DigraphVertexLabels(YT) then
     A   := AutomorphismGroup(XT);
     rep := RepresentativeAction(A, im_YS, DigraphVertexLabels(YT), OnSets);
     if rep = fail then
@@ -330,6 +331,7 @@ InstallMethod(McAlisterTripleSemigroupGroup,
 S -> McAlisterTripleSemigroupGroup(MTSEParent(Representative(S))));
 
 InstallMethod(McAlisterTripleSemigroupPartialOrder,
+
 "for a McAlister triple subsemigroup",
 [IsMcAlisterTripleSubsemigroup],
 S -> McAlisterTripleSemigroupPartialOrder(MTSEParent(Representative(S))));
@@ -382,7 +384,7 @@ SEMIGROUPS.MTSSmallGen := function(S)
 
    if McAlisterTripleSemigroupUnderlyingAction(S) = OnPoints then
      RepAct := {a, b} -> RepresentativeAction(G, b, a);
-     _Stab  := a -> Stabilizer(G, a);
+     _Stab  := {a} -> Stabilizer(G, a);
    else
      # Can't use McAlisterTripleSemigroupAction because it is an anti-action
      # but not an action and produces unexpected results with some of these
@@ -390,7 +392,7 @@ SEMIGROUPS.MTSSmallGen := function(S)
      act    := McAlisterTripleSemigroupUnderlyingAction(S);
      RepAct := {a, b} -> RepresentativeAction(G, b, a, act);
      gens   := Generators(G);
-     _Stab  := a -> Stabilizer(G, a, act);
+     _Stab  := {a} -> Stabilizer(G, a, act);
    fi;
 
    # We use reflexive transitive reductions so we can only check neighbours
@@ -418,7 +420,7 @@ SEMIGROUPS.MTSSmallGen := function(S)
        elif IsEmpty(stab) then  # If D-class is just a single element, add it.
          Add(gens, MTSE(S, c[1], One(G)));
        fi;
-       Add(gens, MTSE(S, Last(c), RepAct(c[1], Last(c))));
+       Add(gens, MTSE(S, c[Length(c)], RepAct(c[1], c[Length(c)])));
 
      else  # We may have already generated some elements of this D-class.
 
@@ -559,7 +561,9 @@ function(_, S)
     xx     := Digraph([[1]]);
     M      := McAlisterTripleSemigroup(H, xx, xx);
 
-    iso := s -> MTSE(M, 1, (s ^ iso_pg) ^ map);
+    iso := function(s)
+      return MTSE(M, 1, (s ^ iso_pg) ^ map);
+    end;
     isom := SemigroupHomomorphismByFunctionNC(S, M, iso);
     SetIsBijective(isom, true);
     return isom;
@@ -616,9 +620,15 @@ function(_, S)
   yy   := DigraphReflexiveTransitiveClosure(yy);
   SetDigraphVertexLabels(yy, yinx);
 
-  act2 := {a, g} -> a ^ (g ^ ah);
+  act2 := function(a, g)
+    return a ^ (g ^ ah);
+  end;
+
   M := McAlisterTripleSemigroup(G, xx, yy, act2);
-  iso := s -> MTSE(M, yinx[Position(ids, LeftOne(s))], s ^ map_G);
+
+  iso := function(s)
+    return MTSE(M, yinx[Position(ids, LeftOne(s))], s ^ map_G);
+  end;
 
   isom := SemigroupHomomorphismByFunctionNC(S, M, iso);
   SetIsBijective(isom, true);
@@ -664,8 +674,7 @@ end);
 
 InstallMethod(McAlisterTripleSemigroupElementParent,
 "for a McAlister triple semigroup element rep",
-[IsMcAlisterTripleSemigroupElementRep],
-{x} -> x![3]);
+[IsMcAlisterTripleSemigroupElementRep], x -> x![3]);
 
 InstallMethod(String, "for a McAlister triple semigroup element rep",
 [IsMcAlisterTripleSemigroupElementRep],
@@ -678,7 +687,7 @@ end);
 
 InstallMethod(ViewString, "for a McAlister triple semigroup element rep",
 [IsMcAlisterTripleSemigroupElementRep],
-{x} -> Concatenation("(", ViewString(x[1]), ", ", ViewString(x[2]), ")"));
+x -> Concatenation("(", ViewString(x[1]), ", ", ViewString(x[2]), ")"));
 
 InstallMethod(\=, "for two McAlister triple semigroup element reps",
 IsIdenticalObj,
@@ -690,7 +699,7 @@ InstallMethod(\*, "for two McAlister triple semigroup element reps",
 function(x, y)
   local S;
   S := McAlisterTripleSemigroupElementParent(x);
-  if S <> McAlisterTripleSemigroupElementParent(y) then
+  if not S = McAlisterTripleSemigroupElementParent(y) then
     ErrorNoReturn("the arguments (McAlister triple elements) do not ",
                   "belong to the same McAlister triple semigroup");
   fi;
@@ -708,9 +717,8 @@ InstallMethod(\<, "for two McAlister triple semigroup element reps",
 InstallMethod(InverseOp, "for a McAlister triple semigroup element rep",
 [IsMcAlisterTripleSemigroupElementRep],
 function(x)
-  return MTSE(x![3],
-              McAlisterTripleSemigroupAction(x![3])(x[1], Inverse(x[2])),
-              Inverse(x[2]));
+  return MTSE(x![3], McAlisterTripleSemigroupAction(x![3])(x[1], Inverse(x[2])),
+            Inverse(x[2]));
 end);
 
 InstallMethod(\^, "for a McAlister triple semigroup element and a negative int",
@@ -756,8 +764,7 @@ end;
 # congruence classes of the minimum group congruence. Thus we can simply
 # check that precisely one of the sources of the digraph of the natural
 # partial order is in each connected component.
-InstallMethod(IsFInverseMonoid, "for a semigroup",
-[IsSemigroup],
+InstallMethod(IsFInverseMonoid, "for a semigroup", [IsSemigroup],
 function(S)
   local comp, po;
   if not IsInverseMonoid(S) then
@@ -773,8 +780,7 @@ function(S)
 end);
 
 InstallMethod(IsFInverseMonoid, "for a McAlister triple semigroup",
-[IsMcAlisterTripleSemigroup],
-S -> IsMonoid(S) and IsFInverseSemigroup(S));
+[IsMcAlisterTripleSemigroup], S -> IsMonoid(S) and IsFInverseSemigroup(S));
 
 # A McAlister triple semigroup is F-inverse precisely when X, the partial
 # order, is a join-semilattice.
@@ -786,8 +792,7 @@ S -> IsJoinSemilatticeDigraph(McAlisterTripleSemigroupPartialOrder(S)));
 # An E-unitary inverse semigroup is said to be an F-inverse semigroup if
 # for each pair of idempotents (e,f): each \sigma_{e,f} class has a maximal
 # element. It is simpler to find an isomorphism and use the above method.
-InstallMethod(IsFInverseSemigroup, "for a semigroup",
-[IsSemigroup],
+InstallMethod(IsFInverseSemigroup, "for a semigroup", [IsSemigroup],
 function(S)
   if not IsEUnitaryInverseSemigroup(S) then
     return false;

@@ -46,13 +46,11 @@ end);
 
 InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
 [IsReesZeroMatrixSemigroup, IsList],
-{filt, params}
--> SEMIGROUPS_ProcessRandomArgsCons(IsReesMatrixSemigroup, params));
+{_, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsReesMatrixSemigroup, params));
 
 InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
 [IsReesZeroMatrixSemigroup and IsRegularSemigroup, IsList],
-{filt, params}
--> SEMIGROUPS_ProcessRandomArgsCons(IsReesMatrixSemigroup, params));
+{_, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsReesMatrixSemigroup, params));
 
 InstallMethod(RandomSemigroupCons,
 "for IsReesZeroMatrixSemigroup and list",
@@ -78,8 +76,7 @@ function(_, params)
   return ReesZeroMatrixSemigroup(G, mat);
 end);
 
-InstallMethod(RandomSemigroupCons,
-"for IsReesMatrixSemigroup and list",
+InstallMethod(RandomSemigroupCons, "for IsReesMatrixSemigroup and list",
 [IsReesMatrixSemigroup, IsList],
 function(_, params)
   local I, G, J, mat, i, j;
@@ -154,12 +151,12 @@ InstallMethod(AsMonoid, "for a Rees 0-matrix semigroup",
 InstallMethod(IsomorphismSemigroup,
 "for IsReesMatrixSemigroup and a semigroup",
 [IsReesMatrixSemigroup, IsSemigroup],
-{filt, S} -> IsomorphismReesMatrixSemigroup(S));
+{_, S} -> IsomorphismReesMatrixSemigroup(S));
 
 InstallMethod(IsomorphismSemigroup,
 "for IsReesZeroMatrixSemigroup and a semigroup",
 [IsReesZeroMatrixSemigroup, IsSemigroup],
-{filt, S} -> IsomorphismReesZeroMatrixSemigroup(S));
+{_, S} -> IsomorphismReesZeroMatrixSemigroup(S));
 
 InstallMethod(IsomorphismReesMatrixSemigroup, "for a semigroup",
 [IsSemigroup],
@@ -714,7 +711,9 @@ function(R)
     fi;
   fi;
 
-  GT := {x, y} -> y < x;
+  GT := function(x, y)
+    return y < x;
+  end;
 
   # Sort the connected components of <R> by size (#rows * #columns) descending.
   # This also sends any zero-columns or zero-rows to the end of the new matrix.
@@ -932,28 +931,21 @@ R -> Length(Rows(R)) * Size(UnderlyingSemigroup(R)) * Length(Columns(R)));
 InstallMethod(Size, "for a Rees 0-matrix semigroup",
 [IsReesZeroMatrixSemigroup and HasUnderlyingSemigroup and HasRows and
  HasColumns],
-function(R)
-  return Length(Rows(R)) * Size(UnderlyingSemigroup(R)) * Length(Columns(R))
-         + 1;
-end);
+R -> Length(Rows(R)) * Size(UnderlyingSemigroup(R)) * Length(Columns(R)) + 1);
 
 #############################################################################
 # Pickler
 #############################################################################
 
-SEMIGROUPS.PickleRMSOrRZMS := function(str)
-  Assert(1, IsString(str));
-  return function(file, x)
-    if IO_Write(file, str) = fail
-          or IO_Pickle(file, [UnderlyingSemigroup(x), Matrix(x)]) = IO_Error then
-      return IO_Error;
-    fi;
-    return IO_OK;
-  end;
-end;
-
 InstallMethod(IO_Pickle, "for a Rees matrix semigroup",
-[IsFile, IsReesMatrixSemigroup], SEMIGROUPS.PickleRMSOrRZMS("RMSX"));
+[IsFile, IsReesMatrixSemigroup],
+function(file, x)
+  if IO_Write(file, "RMSX") = fail
+      or IO_Pickle(file, [UnderlyingSemigroup(x), Matrix(x)]) = IO_Error then
+    return IO_Error;
+  fi;
+  return IO_OK;
+end);
 
 IO_Unpicklers.RMSX := function(file)
   local x;
@@ -965,7 +957,14 @@ IO_Unpicklers.RMSX := function(file)
 end;
 
 InstallMethod(IO_Pickle, "for a Rees 0-matrix semigroup",
-[IsFile, IsReesZeroMatrixSemigroup], SEMIGROUPS.PickleRMSOrRZMS("RZMS"));
+[IsFile, IsReesZeroMatrixSemigroup],
+function(file, x)
+  if IO_Write(file, "RZMS") = fail
+      or IO_Pickle(file, [UnderlyingSemigroup(x), Matrix(x)]) = IO_Error then
+    return IO_Error;
+  fi;
+  return IO_OK;
+end);
 
 IO_Unpicklers.RZMS := function(file)
   local x;

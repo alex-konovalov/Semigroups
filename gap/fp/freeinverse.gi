@@ -39,7 +39,7 @@ InstallImmediateMethod(IsFinite, IsFreeInverseSemigroup, 0, ReturnFalse);
 ##
 
 InstallGlobalFunction(FreeInverseSemigroup,
-function(arg...)
+function(arg)
   local names, F, type, gens, opts, S, m;
 
   # Get and check the argument list, and construct names if necessary.
@@ -102,7 +102,7 @@ function(arg...)
   F!.semigroup := S;
 
   SetIsWholeFamily(S, true);
-  SetIsTrivial(S, IsEmpty(names));
+  SetIsTrivial(S, Length(names) = 0);
 
   return S;
 end);
@@ -148,20 +148,18 @@ end);
 ## MinimalWord
 ##
 
-SEMIGROUPS.InvertGenerator := function(n)
-  if n mod 2 = 0 then
-    return n - 1;
-  fi;
-  return n + 1;
-end;
-
 InstallMethod(MinimalWord, "for a free inverse semigroup element",
 [IsFreeInverseSemigroupElement],
 function(x)
   local InvertGenerator, is_a_child_of, gen, stop_start, i, j, path, words,
    pos, part, temp_word, out, names;
 
-  InvertGenerator := SEMIGROUPS.InvertGenerator;
+  InvertGenerator := function(n)
+    if n mod 2 = 0 then
+      return n - 1;
+    fi;
+    return n + 1;
+  end;
 
   is_a_child_of := x![4];
   gen := x![5];
@@ -218,9 +216,9 @@ function(x)
     fi;
   od;
 
-  out := Concatenation(out);
-  if Last(out) = '*' then
-    Remove(out);
+  out := Concatenation (out);
+  if out[Length(out)] = '*' then
+    Remove(out);  # removes the last entry
   fi;
 
   return out;
@@ -235,10 +233,15 @@ end);
 InstallMethod(CanonicalForm, "for a free inverse semigroup element",
 [IsFreeInverseSemigroupElement],
 function(tree)
-  local InvertGenerator, children, fork, maxleftreducedpath,
+  local InvertGenerator, children, fork, tail, maxleftreducedpath,
   maxleftreduced, groupelem, i, mlr, output, pivot;
 
-  InvertGenerator := SEMIGROUPS.InvertGenerator;
+  InvertGenerator := function(n)
+    if n mod 2 = 0 then
+      return n - 1;
+    fi;
+    return n + 1;
+  end;
 
   children := function(n)
     local list, i;
@@ -262,11 +265,13 @@ function(tree)
     return result;
   end;
 
+  tail := list -> list[Length(list)];
+
   maxleftreducedpath := fork([], children(1));
   for pivot in maxleftreducedpath do
-    while children(Last(pivot)) <> [] do
-      maxleftreducedpath := fork(pivot, children(Last(pivot)));
-      Add(pivot, Last(children(Last(pivot))));
+    while children(tail(pivot)) <> [] do
+      maxleftreducedpath := fork(pivot, children(tail(pivot)));
+      Add(pivot, tail(children(tail(pivot))));
     od;
   od;
 
@@ -350,7 +355,12 @@ IsIdenticalObj,
 function(tree1, tree2)
   local new_names, product, i, parent, InvertGenerator;
 
-  InvertGenerator := SEMIGROUPS.InvertGenerator;
+  InvertGenerator := function(n)
+    if n mod 2 = 0 then
+      return n - 1;
+    fi;
+    return n + 1;
+  end;
 
   new_names    := [];
   new_names[1] := tree1![3];

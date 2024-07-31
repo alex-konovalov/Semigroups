@@ -26,10 +26,11 @@ ReadPackage("semigroups", "gap/elements/trans.gi");
 ReadPackage("semigroups", "gap/elements/elements.gi");
 ReadPackage("semigroups", "gap/elements/pperm.gi");
 
-ReadPackage("semigroups", "gap/libsemigroups/cong.gi");
-ReadPackage("semigroups", "gap/libsemigroups/fpsemi.gi");
-ReadPackage("semigroups", "gap/libsemigroups/froidure-pin.gi");
-ReadPackage("semigroups", "gap/libsemigroups/sims1.gi");
+# ReadPackage("semigroups", "gap/libsemigroups/cong.gi");
+# ReadPackage("semigroups", "gap/libsemigroups/fpsemi.gi");
+# ReadPackage("semigroups", "gap/libsemigroups/froidure-pin.gi");
+# ReadPackage("semigroups", "gap/libsemigroups/sims1.gi");
+ReadPackage("semigroups", "gap/libsemigroups/ranges.gi");
 
 ReadPackage("semigroups", "gap/main/froidure-pin.gi");
 ReadPackage("semigroups", "gap/main/setup.gi");
@@ -88,7 +89,7 @@ ReadPackage("semigroups", "gap/congruences/cong.gi");
 ReadPackage("semigroups", "gap/congruences/congpart.gi");
 ReadPackage("semigroups", "gap/congruences/congpairs.gi");
 ReadPackage("semigroups", "gap/congruences/conginv.gi");
-ReadPackage("semigroups", "gap/congruences/conglatt.gi");
+# ReadPackage("semigroups", "gap/congruences/conglatt.gi");
 ReadPackage("semigroups", "gap/congruences/congrees.gi");
 ReadPackage("semigroups", "gap/congruences/congrms.gi");
 ReadPackage("semigroups", "gap/congruences/congsemigraph.gi");

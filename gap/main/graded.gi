@@ -33,22 +33,20 @@ end);
 
 InstallMethod(\in, "for a lambda value and graded lambda orbs",
 [IsObject, IsGradedLambdaOrbs],
-{lamf, o} -> not HTValue(GradedLambdaHT(o!.parent), lamf) = fail);
+{lamf, o} -> HTValue(GradedLambdaHT(o!.parent), lamf) <> fail);
 
 InstallMethod(\in, "for a rho value and graded rho orbs",
 [IsObject, IsGradedRhoOrbs],
-{rho, o} -> not HTValue(GradedRhoHT(o!.parent), rho) = fail);
+{rho, o} -> HTValue(GradedRhoHT(o!.parent), rho) <> fail);
 
 InstallMethod(ELM_LIST, "for graded lambda orbs, and pos int",
-[IsGradedLambdaOrbs, IsPosInt],
-{o, j} -> o!.orbits[j]);
+[IsGradedLambdaOrbs, IsPosInt], {o, j} -> o!.orbits[j]);
 
 InstallMethod(ELM_LIST, "for graded rho orbs, and pos int",
-[IsGradedRhoOrbs, IsPosInt],
-{o, j} -> o!.orbits[j]);
+[IsGradedRhoOrbs, IsPosInt], {o, j} -> o!.orbits[j]);
 
 InstallGlobalFunction(GradedLambdaOrb,
-function(arg...)
+function(arg)
   local S, x, global, obj, lambda, graded, pos, gradingfunc, onlygrades,
   onlygradesdata, orb, gens, o, j, k, l;
 
@@ -88,14 +86,16 @@ function(arg...)
 
     gradingfunc := {o, x} -> [LambdaRank(S)(x), x];
 
-    onlygrades := {x, data} ->
-      x[1] = LambdaRank(S)(lambda) and HTValue(data, x[2]) = fail;
+    onlygrades := function(x, data_ht)
+                    return x[1] = LambdaRank(S)(lambda)
+                     and HTValue(data_ht, x[2]) = fail;
+                  end;
 
     onlygradesdata := GradedLambdaHT(S);
 
   else  # local
-    gradingfunc := {o, x} -> LambdaRank(S)(x);
-    onlygrades := {x, data_ht} -> x = LambdaRank(S)(lambda);
+    gradingfunc    := {_, x} -> LambdaRank(S)(x);
+    onlygrades     := {x, _} -> x = LambdaRank(S)(lambda);
     onlygradesdata := fail;
   fi;
 
@@ -142,7 +142,7 @@ function(arg...)
 end);
 
 InstallGlobalFunction(GradedRhoOrb,
-function(arg...)
+function(arg)
   local S, x, global, obj, rho, graded, pos, gradingfunc, onlygrades,
   onlygradesdata, orb, gens, o, j, k, l;
 
@@ -187,8 +187,9 @@ function(arg...)
 
     onlygradesdata := GradedRhoHT(S);
   else  # local
-    gradingfunc := {o, x} -> RhoRank(S)(x);
-    onlygrades := {x, data_ht} -> x = RhoRank(S)(rho);
+
+    gradingfunc := {_, x} -> RhoRank(S)(x);
+    onlygrades := {x, _} -> x = RhoRank(S)(rho);
     onlygradesdata := fail;
   fi;
 
@@ -278,11 +279,11 @@ InstallMethod(IsBound\[\], "for graded rho orbs and pos int",
 
 InstallMethod(Position, "for graded lambda orbs and lambda value",
 [IsGradedLambdaOrbs, IsObject, IsZeroCyc],
-{o, lamf, n} -> HTValue(GradedLambdaHT(o!.parent), lamf));
+{o, lamf, _} -> HTValue(GradedLambdaHT(o!.parent), lamf));
 
 InstallMethod(Position, "for graded rho orbs and rho value",
 [IsGradedRhoOrbs, IsObject, IsZeroCyc],
-{o, rho, n} -> HTValue(GradedRhoHT(o!.parent), rho));
+{o, rho, _} -> HTValue(GradedRhoHT(o!.parent), rho));
 
 InstallMethod(PrintObj, [IsGradedLambdaOrbs],
 function(o)

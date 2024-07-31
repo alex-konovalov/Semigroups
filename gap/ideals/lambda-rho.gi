@@ -22,6 +22,7 @@ function(o, limit)
 
   newlookfunc := {data, x} -> IsClosedOrbit(o) or Length(o) >= limit;
   Enumerate(SemigroupData(o!.parent), infinity, newlookfunc);
+
   return o;
 end);
 
@@ -42,13 +43,11 @@ function(o, limit, lookfunc)
   return o;
 end);
 
-InstallMethod(Length, "for a ideal orb",
-[IsIdealOrb],
+InstallMethod(Length, "for a ideal orb", [IsIdealOrb],
 o -> Sum(o!.lens));
 
 InstallMethod(Length, "for an ideal inverse orb",
-[IsIdealOrb and IsInverseOrb],
-o -> Length(o!.orbit));
+[IsIdealOrb and IsInverseOrb], o -> Length(o!.orbit));
 
 InstallMethod(IsBound\[\], "for an ideal orb and positive integer",
 [IsIdealOrb, IsPosInt],
@@ -64,8 +63,7 @@ function(o, i)
 end);
 
 InstallMethod(IsBound\[\], "for an inverse ideal orb and positive integer",
-[IsIdealOrb and IsInverseOrb, IsPosInt],
-{o, i} -> IsBound(o!.orbit[i]));
+[IsIdealOrb and IsInverseOrb, IsPosInt], {o, i} -> IsBound(o!.orbit[i]));
 
 InstallMethod(ELM_LIST, "for an ideal orb and positive integer",
 [IsIdealOrb, IsPosInt],
@@ -91,12 +89,11 @@ InstallMethod(\in, "for an object and ideal orb",
 # same method for inverse ideal orbs
 
 InstallMethod(Position, "for an ideal orb, object, zero cyc",
-[IsIdealOrb, IsObject, IsZeroCyc], {o, obj, n} -> HTValue(o!.ht, obj));
+[IsIdealOrb, IsObject, IsZeroCyc], {o, obj, _} -> HTValue(o!.ht, obj));
 
 # same method for inverse ideal orbs
 
-InstallMethod(OrbitGraph, "for an ideal orb",
-[IsIdealOrb], o -> o!.orbitgraph);
+InstallMethod(OrbitGraph, "for an ideal orb", [IsIdealOrb], o -> o!.orbitgraph);
 
 InstallMethod(ViewObj, "for a ideal orb",
 [IsIdealOrb],
@@ -312,8 +309,11 @@ function(o, pt, x, pos, gen, ind, lookfunc)
   len := Length(o);
 
   if len <> 0 then
-    record.gradingfunc    := {new, x} -> HTValue(o!.ht, x) <> fail;
-    record.onlygrades     := {x, data} -> not x;
+    record.gradingfunc := function(_, x)
+      return HTValue(o!.ht, x) <> fail;
+      # return x in o;
+    end;
+    record.onlygrades := {x, _} -> not x;
     record.onlygradesdata := fail;
   fi;
 
@@ -420,8 +420,8 @@ function(o, pt, x, pos, gen, ind, lookfunc)
   len := Length(o);
 
   if len <> 0 then
-    record.gradingfunc    := {new, x} -> HTValue(o!.ht, x) <> fail;
-    record.onlygrades     := {x, data} -> not x;
+    record.gradingfunc    := {_, x} -> HTValue(o!.ht, x) <> fail;
+    record.onlygrades     := {x, _} -> not x;
     record.onlygradesdata := fail;
   fi;
 
@@ -524,13 +524,11 @@ function(o, w)
 end);
 
 InstallMethod(EvaluateWord, "for a lambda orb and a word (Semigroups)",
-[IsLambdaOrb, IsList], 1,
-# to beat the methods for IsXCollection
+[IsLambdaOrb, IsList], 1,  # to beat the methods for IsXCollection
 {o, w} -> EvaluateWord(o!.gens, w));
 
 InstallMethod(EvaluateWord, "for a rho orb and a word (Semigroups)",
-[IsRhoOrb, IsList], 1,
-# to beat the methods for IsXCollection
+[IsRhoOrb, IsList], 1,  # to beat the methods for IsXCollection
 {o, w} -> EvaluateWord(o!.gens, w));
 
 # returns a triple [leftword, nr, rightword] where <leftword>, <rightword> are

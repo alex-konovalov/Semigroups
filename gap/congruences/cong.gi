@@ -47,7 +47,7 @@ C -> CanUseLibsemigroupsCongruence(EquivalenceClassRelation(C)));
 ########################################################################
 
 InstallGlobalFunction(SemigroupCongruence,
-function(arg...)
+function(arg)
   local S, opts, s_opts, x, pairs, cong;
   if not Length(arg) >= 2 then
     ErrorNoReturn("at least 2 arguments are required");
@@ -57,8 +57,8 @@ function(arg...)
   S := arg[1];
 
   # Set up any options
-  if IsRecord(Last(arg)) then
-    opts := Last(arg);
+  if IsRecord(arg[Length(arg)]) then
+    opts := arg[Length(arg)];
     arg := arg{[1 .. Length(arg) - 1]};
   else
     opts := rec();
@@ -176,16 +176,10 @@ function(CongruenceConstructor, arg)
 end);
 
 InstallGlobalFunction(LeftSemigroupCongruence,
-# Can't be a lambda because arg has a special meaning here
-function(arg...)
-  return _LeftOrRightCong(LeftSemigroupCongruenceByGeneratingPairs, arg);
-end);
+arg -> _LeftOrRightCong(LeftSemigroupCongruenceByGeneratingPairs, arg));
 
 InstallGlobalFunction(RightSemigroupCongruence,
-# Can't be a lambda because arg has a special meaning here
-function(arg...)
-  return _LeftOrRightCong(RightSemigroupCongruenceByGeneratingPairs, arg);
-end);
+arg -> _LeftOrRightCong(RightSemigroupCongruenceByGeneratingPairs, arg));
 
 ########################################################################
 # Trivial congruence

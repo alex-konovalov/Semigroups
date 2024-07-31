@@ -99,3 +99,6 @@ DeclareOperation("PrincipalRightCongruencesOfSemigroup",
                  [IsSemigroup, IsListOrCollection]);
 
 DeclareAttribute("GeneratingCongruencesOfJoinSemilattice", IsCongruencePoset);
+
+DeclareGlobalFunction("_ClosureLattice");
+DeclareGlobalFunction("WrappedTwoSidedCongruence");

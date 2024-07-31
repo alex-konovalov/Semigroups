@@ -514,8 +514,7 @@ InstallMethod(IteratorOfRClasses, "for a finite semigroup",
 
 # Viewing, printing, etc
 
-InstallMethod(ViewString, "for a Green's class",
-[IsGreensClass],
+InstallMethod(ViewString, "for a Green's class", [IsGreensClass],
 function(C)
   local str;
 

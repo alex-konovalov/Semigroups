@@ -139,8 +139,7 @@ function(S)
   return SEMIGROUPS.DualSemigroupElementNC(S, Representative(DualSemigroup(S)));
 end);
 
-InstallMethod(Size, "for a dual semigroup",
-[IsDualSemigroupRep],
+InstallMethod(Size, "for a dual semigroup", [IsDualSemigroupRep],
 10,  # add rank to beat enumeration methods
 S -> Size(DualSemigroup(S)));
 

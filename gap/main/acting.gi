@@ -158,8 +158,9 @@ function(x, S)
       return false;
     fi;
 
-    lookfunc :=
-    {data, x} -> IsBound(lambdarhoht[l]) and IsBound(lambdarhoht[l][m]);
+    # TODO lambdarhoht should be stored in data
+    lookfunc := {data, x} -> IsBound(lambdarhoht[l])
+                             and IsBound(lambdarhoht[l][m]);
 
     data := Enumerate(data, infinity, lookfunc);
 
@@ -276,13 +277,12 @@ end);
 
 InstallMethod(\in, "for a multiplicative element and semigroup data",
 [IsMultiplicativeElement, IsSemigroupData],
-{f, data} -> not Position(data, f) = fail);
+{f, data} -> Position(data, f) <> fail);
 
 # same method for ideals
 
 InstallMethod(ELM_LIST, "for semigroup data, and pos int",
-[IsSemigroupData, IsPosInt],
-{o, nr} -> o!.orbit[nr]);
+[IsSemigroupData, IsPosInt], {o, nr} -> o!.orbit[nr]);
 
 # same method for ideals
 
@@ -765,12 +765,12 @@ InstallMethod(String, "for the universal fake one",
 InstallMethod(\*,
 "for the universal fake one and a multiplicative element",
 [SEMIGROUPS_IsUniversalFakeOne, IsMultiplicativeElement],
-{x, y} -> y);
+{_, y} -> y);
 
 InstallMethod(\*,
 "for a multiplicative element and the universal fake one",
 [IsMultiplicativeElement, SEMIGROUPS_IsUniversalFakeOne],
-ReturnFirst);
+{x, _} -> x);
 
 InstallMethod(\<, "for the universal fake one and a multiplicative element",
 [SEMIGROUPS_IsUniversalFakeOne, IsMultiplicativeElement], ReturnTrue);

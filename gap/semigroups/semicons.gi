@@ -12,10 +12,10 @@
 # Trivial semigroup: main method
 
 InstallGlobalFunction(TrivialSemigroup,
-function(arg...)
+function(arg)
   local S;
 
-  if IsEmpty(arg) then
+  if Length(arg) = 0 then
     S := TrivialSemigroupCons(IsTransformationSemigroup, 0);
   elif Length(arg) = 1 and IsInt(arg[1]) and arg[1] >= 0 then
     S := TrivialSemigroupCons(IsTransformationSemigroup, arg[1]);
@@ -47,7 +47,7 @@ end);
 InstallMethod(TrivialSemigroupCons,
 "for IsPartialPermSemigroup and an integer",
 [IsPartialPermSemigroup, IsInt],
-{filt, n} -> Semigroup(PartialPerm([1 .. n])));
+{_, n} -> Semigroup(PartialPerm([1 .. n])));
 
 InstallMethod(TrivialSemigroupCons,
 "for IsBipartitionSemigroup and an integer",
@@ -61,20 +61,12 @@ end);
 InstallMethod(TrivialSemigroupCons,
 "for IsBlockBijectionSemigroup and an integer",
 [IsBlockBijectionSemigroup, IsInt],
-function(_, deg)
-  local n;
-  n := Maximum(deg, 1);
-  return TrivialSemigroupCons(IsBipartitionSemigroup, n);
-end);
+{_, deg} -> TrivialSemigroupCons(IsBipartitionSemigroup, Maximum(deg, 1)));
 
 InstallMethod(TrivialSemigroupCons,
 "for IsPBRSemigroup and an integer",
 [IsPBRSemigroup, IsInt],
-function(_, deg)
-  local n;
-  n := Maximum(deg, 1);
-  return Semigroup(IdentityPBR(n));
-end);
+{_, deg} -> Semigroup(IdentityPBR(Maximum(deg, 1))));
 
 InstallMethod(TrivialSemigroupCons,
 "for IsBooleanMatSemigroup and an integer",
@@ -112,7 +104,7 @@ Unbind(_IsXSemigroup);
 # Monogenic semigroup: main method
 
 InstallGlobalFunction(MonogenicSemigroup,
-function(arg...)
+function(arg)
   local filter, m, r, S;
 
   if Length(arg) = 2  then
@@ -159,7 +151,7 @@ function(_, m, r)
   t := [1 .. r] + 1;
   t[r] := 1;
 
-  if m <> 1 then  # m = 1 specifies a cyclic group
+  if not m = 1 then  # m = 1 specifies a cyclic group
     Append(t, [1 .. m] + r - 1);
   fi;
 
@@ -191,7 +183,7 @@ end);
 InstallMethod(MonogenicSemigroupCons,
 "for a IsBipartitionSemigroup and two positive integers",
 [IsBipartitionSemigroup, IsPosInt, IsPosInt],
-{filter, m, r} -> MonogenicSemigroupCons(IsBlockBijectionSemigroup, m, r));
+{_, m, r} -> MonogenicSemigroupCons(IsBlockBijectionSemigroup, m, r));
 
 InstallMethod(MonogenicSemigroupCons,
 "for IsBlockBijectionSemigroup and two positive integers",
@@ -214,7 +206,7 @@ function(_, m, r)
     offset := r + 1;
   fi;
 
-  if m <> 1 then
+  if not m = 1 then
     Add(out, [offset, -offset, offset + 1, -(offset + m)]);
     for i in [offset + 2 .. offset + m] do
       Add(out, [i, -i + 1]);
@@ -250,7 +242,7 @@ Unbind(_IsXSemigroup);
 # Rectangular band: main method
 
 InstallGlobalFunction(RectangularBand,
-function(arg...)
+function(arg)
   local filter, m, n, S;
 
   if Length(arg) = 2  then
@@ -584,7 +576,7 @@ Unbind(_IsXMonoid);
 # Zero semigroup: main method
 
 InstallGlobalFunction(ZeroSemigroup,
-function(arg...)
+function(arg)
   local filter, n, S;
 
   if Length(arg) = 1  then
@@ -756,7 +748,7 @@ Unbind(_IsXSemigroup);
 # Left zero semigroup: main method
 
 InstallGlobalFunction(LeftZeroSemigroup,
-function(arg...)
+function(arg)
   local filt, n, S, max, deg, N, R, gens, im, iter, r, i;
 
   if Length(arg) = 1 then
@@ -808,7 +800,7 @@ end);
 # Right zero semigroup: main method
 
 InstallGlobalFunction(RightZeroSemigroup,
-function(arg...)
+function(arg)
   local filt, n, S, max, deg, ker, add, iter, gens, i;
 
   if Length(arg) = 1 then
@@ -875,7 +867,7 @@ function(arg...)
 end);
 
 InstallGlobalFunction(BrandtSemigroup,
-function(arg...)
+function(arg)
   local S;
 
   if Length(arg) = 1 and IsPosInt(arg[1]) then
@@ -1138,7 +1130,7 @@ end);
 
 InstallMethod(Size, "for a strong semilattice of semigroups",
 [IsStrongSemilatticeOfSemigroups],
-{S} -> Sum(SemigroupsOfStrongSemilatticeOfSemigroups(S), Size));
+S -> Sum(SemigroupsOfStrongSemilatticeOfSemigroups(S), Size));
 
 InstallMethod(ViewString, "for a strong semilattice of semigroups",
 [IsStrongSemilatticeOfSemigroups],
@@ -1188,5 +1180,5 @@ end);
 InstallMethod(ViewString, "for a SSSE", [IsSSSERep],
 x -> Concatenation("SSSE(", ViewString(x![2]), ", ", ViewString(x![3]), ")"));
 
-InstallMethod(UnderlyingSemilatticeOfSemigroups, "for a SSSE",
+InstallMethod(UnderlyingSemilatticeOfSemigroups, "for a SSSE rep",
 [IsSSSERep], x -> x![1]);

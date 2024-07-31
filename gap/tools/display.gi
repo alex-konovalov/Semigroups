@@ -18,7 +18,7 @@ SEMIGROUPS.GetTikzInit := function(opts)
     extra := "";
   fi;
 
-  return StringFormatted("1\n2\n3\n4\n5\n",
+  return StringFormatted("{1}\n{2}\n{3}\n{4}\n{5}\n",
                          "%latex",
                          "\\documentclass{minimal}",
                          "\\usepackage{tikz}",
@@ -92,12 +92,10 @@ end);
 
 #############################################################################
 
-InstallMethod(TikzString, "for a pbr collection",
-[IsPBRCollection],
+InstallMethod(TikzString, "for a pbr collection", [IsPBRCollection],
 coll -> TikzString(coll, SEMIGROUPS.TikzPBROpts));
 
-InstallMethod(TikzString, "for a pbr",
-[IsPBR],
+InstallMethod(TikzString, "for a pbr", [IsPBR],
 x -> TikzString(x, SEMIGROUPS.TikzPBROpts));
 
 InstallMethod(TikzString, "for a pbr and record",
@@ -253,10 +251,9 @@ end);
 
 InstallMethod(TikzString, "for a bipartition collection",
 [IsBipartitionCollection],
-{coll} -> TikzString(coll, SEMIGROUPS.TikzBipartitionOpts));
+coll -> TikzString(coll, SEMIGROUPS.TikzBipartitionOpts));
 
-InstallMethod(TikzString, "for a bipartition",
-[IsBipartition],
+InstallMethod(TikzString, "for a bipartition", [IsBipartition],
 x -> TikzString(x, SEMIGROUPS.TikzBipartitionOpts));
 
 InstallMethod(TikzString, "for a bipartition and record",

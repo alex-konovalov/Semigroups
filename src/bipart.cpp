@@ -35,15 +35,14 @@
 
 // libsemigroups headers
 #include "libsemigroups/bipart.hpp"  // for Blocks, Bipartition, validate
-#include "libsemigroups/report.hpp"  // for Reporter, etc
-#include "libsemigroups/timer.hpp"   // for Timer
+#include "libsemigroups/detail/report.hpp"  // for Reporter, etc
+#include "libsemigroups/detail/timer.hpp"   // for Timer
 #include "semigroups-config.hpp"     // for SEMIGROUPS_KERNEL_DEBUG
 
 #include "gapbind14/gapbind14.hpp"  // for GAPBIND14_TRY
 
 using libsemigroups::Bipartition;
 using libsemigroups::Blocks;
-using libsemigroups::REPORTER;
 using libsemigroups::detail::Timer;
 
 // Global variables
@@ -1399,8 +1398,8 @@ class IdempotentCounter {
   }
 
   std::vector<size_t> count() {
-    libsemigroups::THREAD_ID_MANAGER.reset();
-    REPORT_DEFAULT("using %llu / %llu additional threads",
+    libsemigroups::detail::reset_thread_ids();
+    libsemigroups::report_default("using {} / {} additional threads",
                    _nr_threads,
                    std::thread::hardware_concurrency());
     Timer timer;
@@ -1414,7 +1413,7 @@ class IdempotentCounter {
       _threads[i].join();
     }
 
-    REPORT_TIME(timer);
+        libsemigroups::report_elapsed_time("", timer);
 
     size_t              max = *max_element(_ranks.begin(), _ranks.end()) + 1;
     std::vector<size_t> out = std::vector<size_t>(max, 0);
@@ -1450,7 +1449,7 @@ class IdempotentCounter {
         }
       }
     }
-    REPORT_DEFAULT("finished in %llu", timer.string().c_str());
+        libsemigroups::report_default("finished in {}", timer);
   }
 
   // This is basically the same as BLOCKS_E_TESTER, but is required because we

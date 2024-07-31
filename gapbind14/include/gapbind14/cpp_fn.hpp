@@ -42,6 +42,8 @@ namespace gapbind14 {
   // Overloading
   ////////////////////////////////////////////////////////////////////////
 
+  static constexpr auto const_ = std::true_type{};
+
   template <typename... TArgs>
   struct overload_cast_impl {
     constexpr overload_cast_impl() {}
@@ -91,6 +93,11 @@ namespace gapbind14 {
 
     template <typename C, typename R, typename... A>
     struct remove_class<R (C::*)(A...) const> {
+      using type = R(A...);
+    };
+
+    template <typename C, typename R, typename... A>
+    struct remove_class<R (C::*)(A...) const noexcept> {
       using type = R(A...);
     };
 
@@ -186,9 +193,19 @@ namespace gapbind14 {
     struct CppFunction<TReturnType(TArgs...)>
         : CppFunctionBase<TReturnType, TArgs...> {};
 
+    // noexcept free functions
+    template <typename TReturnType, typename... TArgs>
+    struct CppFunction<TReturnType(TArgs...) noexcept>
+        : CppFunctionBase<TReturnType, TArgs...> {};
+
     // Function pointers . . .
     template <typename TReturnType, typename... TArgs>
     struct CppFunction<TReturnType (*)(TArgs...)>
+        : CppFunctionBase<TReturnType, TArgs...> {};
+
+    // noexcept function pointer
+    template <typename TReturnType, typename... TArgs>
+    struct CppFunction<TReturnType (*)(TArgs...) noexcept>
         : CppFunctionBase<TReturnType, TArgs...> {};
 
     // Member functions . . .
@@ -199,6 +216,16 @@ namespace gapbind14 {
     // Const member functions
     template <typename TClass, typename TReturnType, typename... TArgs>
     struct CppFunction<TReturnType (TClass::*)(TArgs...) const>
+        : CppMemFnBase<TClass, TReturnType, TArgs...> {};
+
+    // Const noexcept member functions
+    template <typename TClass, typename TReturnType, typename... TArgs>
+    struct CppFunction<TReturnType (TClass::*)(TArgs...) const noexcept>
+        : CppMemFnBase<TClass, TReturnType, TArgs...> {};
+
+    // Non-const noexcept member functions
+    template <typename TClass, typename TReturnType, typename... TArgs>
+    struct CppFunction<TReturnType (TClass::*)(TArgs...) noexcept>
         : CppMemFnBase<TClass, TReturnType, TArgs...> {};
 
     // std::function objects

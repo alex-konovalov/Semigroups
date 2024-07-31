@@ -145,10 +145,9 @@ InstallMethod(MagmaByGenerators,
 "for a finite associative element collection",
 [IsAssociativeElementCollection and IsFinite], SemigroupByGenerators);
 
-InstallMethod(SemigroupByGenerators,
-"for a finite list or collection",
+InstallMethod(SemigroupByGenerators, "for a finite list or collection",
 [IsListOrCollection and IsFinite],
-{coll} -> SemigroupByGenerators(coll, SEMIGROUPS.DefaultOptionsRec));
+coll -> SemigroupByGenerators(coll, SEMIGROUPS.DefaultOptionsRec));
 
 InstallMethod(SemigroupByGenerators,
 "for a finite list or collection and record",
@@ -198,10 +197,9 @@ function(gens, opts)
   return S;
 end);
 
-InstallMethod(MonoidByGenerators,
-"for a finite list or collection",
+InstallMethod(MonoidByGenerators, "for a finite list or collection",
 [IsListOrCollection and IsFinite],
-{gens} -> MonoidByGenerators(gens, SEMIGROUPS.DefaultOptionsRec));
+gens -> MonoidByGenerators(gens, SEMIGROUPS.DefaultOptionsRec));
 
 InstallMethod(MonoidByGenerators,
 "for a finite list or collection and record",
@@ -262,10 +260,9 @@ function(gens, opts)
   return S;
 end);
 
-InstallMethod(InverseSemigroupByGenerators,
-"for a finite collection",
+InstallMethod(InverseSemigroupByGenerators, "for a finite collection",
 [IsCollection and IsFinite],
-{gens} -> InverseSemigroupByGenerators(gens, SEMIGROUPS.DefaultOptionsRec));
+gens -> InverseSemigroupByGenerators(gens, SEMIGROUPS.DefaultOptionsRec));
 
 InstallMethod(InverseSemigroupByGenerators,
 "for a finite multiplicative element collection and record",
@@ -307,10 +304,9 @@ function(gens, opts)
   return S;
 end);
 
-InstallMethod(InverseMonoidByGenerators,
-"for a finite collection",
+InstallMethod(InverseMonoidByGenerators, "for a finite collection",
 [IsCollection and IsFinite],
-{gens} -> InverseMonoidByGenerators(gens, SEMIGROUPS.DefaultOptionsRec));
+gens -> InverseMonoidByGenerators(gens, SEMIGROUPS.DefaultOptionsRec));
 
 InstallMethod(InverseMonoidByGenerators,
 "for a finite multiplicative element collection and record",
@@ -372,11 +368,11 @@ end);
 #############################################################################
 
 InstallGlobalFunction(RegularSemigroup,
-function(arg...)
-  if not IsRecord(Last(arg)) then
+function(arg)
+  if not IsRecord(arg[Length(arg)]) then
     Add(arg, rec(regular := true));
   else
-    Last(arg).regular := true;
+    arg[Length(arg)].regular := true;
   fi;
   return CallFuncList(Semigroup, arg);
 end);
@@ -714,14 +710,14 @@ InstallMethod(ClosureInverseSemigroup,
 [IsInverseSemigroup and IsGeneratorsOfInverseSemigroup,
  IsListOrCollection and IsEmpty,
  IsRecord],
-ReturnFirst);
+{S, coll, opts} -> S);
 
 InstallMethod(ClosureInverseMonoid,
 "for an inverse monoid, empty list or collection, and record",
 [IsInverseMonoid and IsGeneratorsOfInverseSemigroup,
  IsListOrCollection and IsEmpty,
  IsRecord],
-ReturnFirst);
+{S, coll, opts} -> S);
 
 InstallMethod(ClosureInverseSemigroupOrMonoidNC,
 "for a function, inverse semigroup, empty list, and record",
@@ -729,7 +725,7 @@ InstallMethod(ClosureInverseSemigroupOrMonoidNC,
  IsInverseSemigroup and IsGeneratorsOfInverseSemigroup,
  IsList and IsEmpty,
  IsRecord],
-{Constructor, S, coll, opts} -> S);
+ {Constructor, S, coll, opts} -> S);
 
 #############################################################################
 ## 7. Subsemigroups
@@ -812,7 +808,7 @@ InstallMethod(Random,
 "for a semigroup with AsList",
 [IsSemigroup and HasAsList],
 20,  # to beat other random methods
-{S} -> AsList(S)[Random(1, Size(S))]);
+S -> AsList(S)[Random(1, Size(S))]);
 
 InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
 [IsSemigroup, IsList],
@@ -835,7 +831,7 @@ end);
 
 InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
 [IsMonoid, IsList],
-{filt, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsSemigroup, params));
+{_, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsSemigroup, params));
 
 SEMIGROUPS.DefaultRandomInverseSemigroup := function(filt, params)
   if Length(params) = 2 then
@@ -884,7 +880,7 @@ SEMIGROUPS.DefaultRandomInverseMonoid := function(filt, params)
 end;
 
 InstallGlobalFunction(RandomSemigroup,
-function(arg...)
+function(arg)
   local filt, params;
 
   # check for optional first arg
@@ -926,7 +922,7 @@ function(arg...)
 end);
 
 InstallGlobalFunction(RandomMonoid,
-function(arg...)
+function(arg)
   local filt, params;
 
   # check for optional first arg
@@ -966,7 +962,7 @@ function(arg...)
 end);
 
 InstallGlobalFunction(RandomInverseSemigroup,
-function(arg...)
+function(arg)
   local filt, params;
 
   # check for optional first arg
@@ -1006,7 +1002,7 @@ function(arg...)
 end);
 
 InstallGlobalFunction(RandomInverseMonoid,
-function(arg...)
+function(arg)
   local filt, params;
 
   # check for optional first arg
@@ -1187,8 +1183,8 @@ InstallMethod(AsMonoid, "for a filter, pos int, and a semigroup",
 InstallMethod(AsMonoid,
 "for a filter, pos int, pos int, and a semigroup",
 [IsOperation, IsPosInt, IsPosInt, IsSemigroup],
-{filt, threshold, period, S} ->
-Range(IsomorphismMonoid(filt, threshold, period, S)));
+{filt, threshold, period, S}
+-> Range(IsomorphismMonoid(filt, threshold, period, S)));
 
 InstallMethod(AsMonoid, "for a filter, ring, and semigroup",
 [IsOperation, IsRing, IsSemigroup],

@@ -161,7 +161,7 @@ InstallMethod(EvaluateWord,
 [IsMultiplicativeElementWithOneCollection, IsList],
 function(gens, w)
   local i, res;
-  if IsEmpty(w) then
+  if Length(w) = 0  then
     return One(gens);
   fi;
   res := gens[AbsInt(w[1])] ^ SignInt(w[1]);
@@ -176,7 +176,7 @@ InstallMethod(EvaluateWord,
 [IsMultiplicativeElementCollection, IsList],
 function(gens, w)
   local i, res;
-  if IsEmpty(w) then
+  if Length(w) = 0 then
     return SEMIGROUPS.UniversalFakeOne;
   fi;
   res := gens[AbsInt(w[1])] ^ SignInt(w[1]);
@@ -191,7 +191,7 @@ InstallMethod(EvaluateExtRepObjWord,
 [IsMultiplicativeElementCollection, IsList],
 function(gens, w)
   local res, i;
-  if IsEmpty(w) then
+  if Length(w) = 0 then
     ErrorNoReturn("the second argument must be a non-empty list");
   elif Length(w) mod 2 = 1 then
     ErrorNoReturn("the second argument must be a list of even length");
@@ -208,7 +208,7 @@ InstallMethod(EvaluateExtRepObjWord,
 [IsMultiplicativeElementWithOneCollection, IsList],
 function(gens, w)
   local res, i;
-  if IsEmpty(w) then
+  if Length(w) = 0 then
     return One(gens);
   elif Length(w) mod 2 = 1 then
     ErrorNoReturn("the second argument must be a list of even length");
@@ -221,7 +221,7 @@ function(gens, w)
 end);
 
 InstallGlobalFunction(EnumeratePosition,
-function(arg...)
+function(arg)
   local o, val, onlynew, pos;
 
   o := arg[1];
@@ -242,9 +242,9 @@ function(arg...)
   if IsClosedOrbit(o) then
     return fail;
   fi;
-  o!.looking    := true;
+  o!.looking := true;
   o!.lookingfor := {_, x} -> x = val;
-  o!.lookfunc   := o!.lookingfor;
+  o!.lookfunc := o!.lookingfor;
   Enumerate(o);
   pos := PositionOfFound(o);
   o!.found := false;

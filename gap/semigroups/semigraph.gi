@@ -94,8 +94,7 @@ InstallMethod(ZeroOp, "for a graph inverse semigroup element",
 x -> Objectify(FamilyObj(x)!.type, [[0], x![2]]));
 
 InstallMethod(IsZero, "for a graph inverse semigroup element",
-[IsGraphInverseSemigroupElement],
-x -> x![1][1] = 0);
+[IsGraphInverseSemigroupElement], x -> x![1][1] = 0);
 
 InstallMethod(Source, "for a graph inverse semigroup element",
 [IsGraphInverseSemigroupElement],
@@ -194,8 +193,6 @@ InstallMethod(\<, "for elements of a graph inverse semigroup",
 InstallMethod(\=, "for elements of a graph inverse semigroup",
 [IsGraphInverseSemigroupElement, IsGraphInverseSemigroupElement],
 {x, y} -> x![1] = y![1]);
-
-# here
 
 InstallMethod(\*, "for elements of a graph inverse semigroup",
 [IsGraphInverseSemigroupElement, IsGraphInverseSemigroupElement],

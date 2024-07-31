@@ -272,7 +272,7 @@ function(list, S)
     return [DomainOfPartialPerm(element) + offset,
             ImageListOfPartialPerm(element) + offset];
   end;
-  restrict := function(element, offset, degree)
+  restrict := function(element, offset, _)
     local dom, start, stop, ran;
     dom := DomainOfPartialPerm(element);
     start := PositionSorted(dom, offset + 1);

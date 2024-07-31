@@ -72,9 +72,9 @@ namespace gapbind14 {
     using cpp_type                          = std::string;
     static gap_tnum_type constexpr gap_type = T_STRING;
 
-    Obj operator()(std::string const& str) const {
+    Obj operator()(std::string_view str) const {
       Obj ret;
-      C_NEW_STRING(ret, str.length(), str.c_str());
+      C_NEW_STRING(ret, str.size(), str.begin());
       return ret;
     }
   };
@@ -127,7 +127,7 @@ namespace gapbind14 {
     static gap_tnum_type constexpr gap_type = T_PLIST_HOM;
 
     Obj operator()(std::vector<T> const& v) const {
-      Obj result = NEW_PLIST(T_PLIST_HOM, v.size());
+      Obj result = NEW_PLIST(T_PLIST, v.size());
       SET_LEN_PLIST(result, v.size());
       using value_type = typename std::vector<T>::value_type;
       size_t index     = 1;

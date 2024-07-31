@@ -181,7 +181,7 @@ function(S)
   od;
 
   libsemigroups.Presentation.alphabet_from_rules(P);
-  libsemigroups.Presentation.contains_empty_word(P, true);
+  # FIXME libsemigroups.Presentation.contains_empty_word(P, true);
   libsemigroups.Presentation.validate(P);
 
   ro := libsemigroups.RepOrc.make();

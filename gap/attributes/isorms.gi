@@ -50,7 +50,9 @@ SEMIGROUPS.StabOfRMSMatrix := function(G, R)
   OnMatrix := function(mat, x)
     local rows;
     mat := StructuralCopy(mat);
-    rows := Permutation(x, [1 .. n], {i, p} -> (i + m) ^ p - m);
+    rows := Permutation(x, [1 .. n], function(i, p)
+                                       return (i + m) ^ p - m;
+                                     end);
 
     return List(Permuted(mat, rows), y -> Permuted(y, x));
   end;
@@ -203,7 +205,7 @@ SEMIGROUPS.RZMStoRZMSInducedFunction := function(rms1, rms2, l, g, groupelts)
       j := j + 1;
       Last := orb[j];
       involved := Filtered(edges, x -> x[1] = Last and not x in defined);
-      if not IsEmpty(involved) then
+      if not involved = [] then
 
         verts := List(involved, x -> x[2]);
         Append(orb, Filtered(verts, x -> not x in orb));
@@ -941,8 +943,8 @@ InstallMethod(ELM_LIST, "for objects in `IsRMSIsoByTriple'",
 InstallMethod(ELM_LIST, "for objects in `IsRZMSIsoByTriple'",
 [IsRZMSIsoByTriple, IsPosInt], {x, i} -> x!.triple[i]);
 
-InstallMethod(\=, "for isomorphisms of Rees (0-)matrix semigroups",
-[IsRMSOrRZMSIsoByTriple, IsRMSOrRZMSIsoByTriple],
+InstallMethod(\=, "for objects in `IsRMSIsoByTriple'",
+[IsRMSIsoByTriple, IsRMSIsoByTriple],
 function(x, y)
 
   if Source(x) <> Source(y) or Range(x) <> Range(y) then
@@ -953,6 +955,20 @@ function(x, y)
 
   return OnTuples(GeneratorsOfSemigroup(Source(x)), x)
        = OnTuples(GeneratorsOfSemigroup(Source(x)), y);
+end);
+
+InstallMethod(\=, "for objects in `IsRZMSIsoByTriple'",
+[IsRZMSIsoByTriple, IsRZMSIsoByTriple],
+function(x, y)
+
+  if Source(x) <> Source(y) or Range(x) <> Range(y) then
+    return false;
+  elif x[1] = y[1] and x[2] = y[2] and x[3] = y[3] then
+    return true;
+  fi;
+
+  return OnTuples(GeneratorsOfSemigroup(Source(x)), x)
+         = OnTuples(GeneratorsOfSemigroup(Source(x)), y);
 end);
 
 InstallMethod(\<, "for objects in `IsRMSIsoByTriple'",
@@ -1070,18 +1086,18 @@ end);
 
 InstallMethod(IsOne, "for objects in `IsRMSIsoByTriple'",
 [IsRMSIsoByTriple],
-{map} -> IsOne(map[1]) and IsOne(map[2]) and ForAll(map[3], IsOne));
+map -> IsOne(map[1]) and IsOne(map[2]) and ForAll(map[3], IsOne));
 
 InstallMethod(IsOne, "for objects in `IsRZMSIsoByTriple'",
 [IsEndoGeneralMapping and IsRZMSIsoByTriple],
-{map} -> IsOne(map[1]) and IsOne(map[2]) and ForAll(map[3], IsOne));
+map -> IsOne(map[1]) and IsOne(map[2]) and ForAll(map[3], IsOne));
 
-InstallMethod(PreImagesRepresentativeNC,
+InstallMethod(PreImagesRepresentative,
 "for an RMS element under a mapping by a triple",
 FamRangeEqFamElm, [IsRMSIsoByTriple, IsReesMatrixSemigroupElement],
 {map, x} -> ImagesRepresentative(InverseGeneralMapping(map), x));
 
-InstallMethod(PreImagesRepresentativeNC,
+InstallMethod(PreImagesRepresentative,
 "for an RZMS element under a mapping by a triple",
 FamRangeEqFamElm, [IsRZMSIsoByTriple, IsReesZeroMatrixSemigroupElement],
 {map, x} -> ImagesRepresentative(InverseGeneralMapping(map), x));
@@ -1125,24 +1141,22 @@ end);
 # end);
 
 InstallMethod(ViewObj, "for an object in `IsRMSIsoByTriple'",
-[IsRMSIsoByTriple],
-function(map)
-  Print("(", map[1], ", ", map[2], ", ", map[3], ")");
-end);
+[IsRMSIsoByTriple], map -> Print("(", map[1], ", ", map[2], ", ", map[3], ")"));
 
 InstallMethod(ViewObj, "for object in `IsRZMSIsoByTriple'",
-[IsRZMSIsoByTriple],
-function(map)
-  Print("(", map[1], ", ", map[2], ", ", map[3], ")");
-end);
+[IsRZMSIsoByTriple], map -> Print("(", map[1], ", ", map[2], ", ", map[3], ")"));
 
 # InstallMethod(ViewString, "for an object in `IsRMSIsoByTriple'",
 # [IsRMSIsoByTriple],
-# {map} -> StringFormatted("({!v}, {!v}, {!v})", map[1], map[2], map[3]);
+# function(map)
+#   return StringFormatted("({!v}, {!v}, {!v})", map[1], map[2], map[3]);
+# end);
 #
 # InstallMethod(ViewString, "for object in `IsRZMSIsoByTriple'",
 # [IsRZMSIsoByTriple],
-# {map} -> StringFormatted("({!v}, {!v}, {!v})", map[1], map[2], map[3]);
+# function(map)
+#   return StringFormatted("({!v}, {!v}, {!v})", map[1], map[2], map[3]);
+# end);
 
 InstallMethod(IsomorphismReesMatrixSemigroupOverPermGroup,
 "for a semigroup",

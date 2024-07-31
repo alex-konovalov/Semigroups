@@ -54,7 +54,9 @@ namespace libsemigroups {
 
 namespace gapbind14 {
   template <>
-  struct IsGapBind14Type<libsemigroups::Congruence> : std::true_type {};
+  struct IsGapBind14Type<libsemigroups::Congruence> : std::true_type {
+    static constexpr std::string_view name = "Congruence";
+  };
 
 }  // namespace gapbind14
 
@@ -89,58 +91,60 @@ void init_cong(gapbind14::Module& m) {
 
   // Cannot use FroidurePinBase rather than the specialisations because there's
   // no constructor for a Congruence from a FroidurePinBase&.
-  gapbind14::class_<Congruence>("Congruence")
-      .def(gapbind14::init<congruence_kind, FroidurePin<Bipartition> const&>{},
-           "make_from_froidurepin_bipartition")
-      .def(gapbind14::init<congruence_kind, FroidurePin<BMat<>> const&>{},
-           "make_from_froidurepin_bmat")
-      .def(gapbind14::init<congruence_kind, FroidurePin<WBMat8> const&>{},
-           "make_from_froidurepin_bmat8")
-      .def(gapbind14::init<congruence_kind, FroidurePin<PBR> const&>{},
-           "make_from_froidurepin_pbr")
-#ifdef LIBSEMIGROUPS_HPCOMBI_ENABLED
-      .def(gapbind14::init<congruence_kind,
-                           FroidurePin<LeastPPerm<16>> const&>{},
-           "make_from_froidurepin_leastpperm")
-      .def(gapbind14::init<congruence_kind,
-                           FroidurePin<LeastTransf<16>> const&>{},
-           "make_from_froidurepin_leasttransf")
-#endif
-      .def(gapbind14::init<congruence_kind,
-                           FroidurePin<Transf<0, UInt2>> const&>{},
-           "make_from_froidurepin_transfUInt2")
-      .def(gapbind14::init<congruence_kind,
-                           FroidurePin<Transf<0, UInt4>> const&>{},
-           "make_from_froidurepin_transfUInt4")
-      .def(gapbind14::init<congruence_kind,
-                           FroidurePin<PPerm<0, UInt2>> const&>{},
-           "make_from_froidurepin_ppermUInt2")
-      .def(gapbind14::init<congruence_kind,
-                           FroidurePin<PPerm<0, UInt4>> const&>{},
-           "make_from_froidurepin_ppermUInt4")
-      .def(gapbind14::init<congruence_kind, FpSemigroup&>{},
-           "make_from_fpsemigroup")
-      .def(gapbind14::init<congruence_kind, std::shared_ptr<FroidurePinBase>>{},
-           "make_from_froidurepinbase")
-      .def(gapbind14::init<congruence_kind, Congruence::options::runners>{},
-           "make_from_table")
-      .def("set_number_of_generators", &Congruence::set_number_of_generators)
-      .def("number_of_pairs", &Congruence::number_of_generating_pairs)
-      .def("add_pair",
-           overload_cast<word_type const&, word_type const&>(
-               &Congruence::add_pair))
-      .def("number_of_classes", &Congruence::number_of_classes)
-      .def("word_to_class_index", &Congruence::word_to_class_index)
-      .def("class_index_to_word", &Congruence::class_index_to_word)
-      .def("contains", &Congruence::contains)
-      .def("less", &Congruence::less)
-      .def("add_runner",
-           &Congruence::add_runner<libsemigroups::congruence::ToddCoxeter>)
-      .def("is_quotient_obviously_infinite",
-           &Congruence::is_quotient_obviously_infinite)
-      .def("ntc",
-           [](Congruence& C) {
-             return gapbind14::make_iterator(C.cbegin_ntc(), C.cend_ntc());
-           })
-      .def("quotient_froidure_pin", &Congruence::quotient_froidure_pin);
+  //  gapbind14::class_<Congruence>("Congruence")
+  //      .def(gapbind14::init<congruence_kind, FroidurePin<Bipartition>
+  //      const&>{},
+  //           "make_from_froidurepin_bipartition")
+  //      .def(gapbind14::init<congruence_kind, FroidurePin<BMat<>> const&>{},
+  //           "make_from_froidurepin_bmat")
+  //      .def(gapbind14::init<congruence_kind, FroidurePin<WBMat8> const&>{},
+  //           "make_from_froidurepin_bmat8")
+  //      .def(gapbind14::init<congruence_kind, FroidurePin<PBR> const&>{},
+  //           "make_from_froidurepin_pbr")
+  // #ifdef LIBSEMIGROUPS_HPCOMBI_ENABLED
+  //      .def(gapbind14::init<congruence_kind,
+  //                           FroidurePin<LeastPPerm<16>> const&>{},
+  //           "make_from_froidurepin_leastpperm")
+  //      .def(gapbind14::init<congruence_kind,
+  //                           FroidurePin<LeastTransf<16>> const&>{},
+  //           "make_from_froidurepin_leasttransf")
+  // #endif
+  //      .def(gapbind14::init<congruence_kind,
+  //                           FroidurePin<Transf<0, UInt2>> const&>{},
+  //           "make_from_froidurepin_transfUInt2")
+  //      .def(gapbind14::init<congruence_kind,
+  //                           FroidurePin<Transf<0, UInt4>> const&>{},
+  //           "make_from_froidurepin_transfUInt4")
+  //      .def(gapbind14::init<congruence_kind,
+  //                           FroidurePin<PPerm<0, UInt2>> const&>{},
+  //           "make_from_froidurepin_ppermUInt2")
+  //      .def(gapbind14::init<congruence_kind,
+  //                           FroidurePin<PPerm<0, UInt4>> const&>{},
+  //           "make_from_froidurepin_ppermUInt4")
+  //      .def(gapbind14::init<congruence_kind, FpSemigroup&>{},
+  //           "make_from_fpsemigroup")
+  //      .def(gapbind14::init<congruence_kind,
+  //      std::shared_ptr<FroidurePinBase>>{},
+  //           "make_from_froidurepinbase")
+  //      .def(gapbind14::init<congruence_kind>{},
+  //           "make_from_table")
+  //      .def("set_number_of_generators",
+  //      &Congruence::set_number_of_generators) .def("number_of_pairs",
+  //      &Congruence::number_of_generating_pairs) .def("add_pair",
+  //           overload_cast<word_type const&, word_type const&>(
+  //               &Congruence::add_pair))
+  //      .def("number_of_classes", &Congruence::number_of_classes)
+  //      .def("word_to_class_index", &Congruence::word_to_class_index)
+  //      .def("class_index_to_word", &Congruence::class_index_to_word)
+  //      .def("contains", &Congruence::contains)
+  //      .def("less", &Congruence::less)
+  //      .def("add_runner",
+  //           &Congruence::add_runner<libsemigroups::congruence::ToddCoxeter>)
+  //      .def("is_quotient_obviously_infinite",
+  //           &Congruence::is_quotient_obviously_infinite)
+  //      .def("ntc",
+  //           [](Congruence& C) {
+  //             return gapbind14::make_iterator(C.cbegin_ntc(), C.cend_ntc());
+  //           })
+  //      .def("quotient_froidure_pin", &Congruence::quotient_froidure_pin);
 }

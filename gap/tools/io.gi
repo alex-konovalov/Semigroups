@@ -56,7 +56,7 @@ SEMIGROUPS.ReadGeneratorsLine := function(line)
     i := i + m * (deg + 1) + 1;
   od;
 
-  if IsEmpty(line) then
+  if Length(line) = 0 then
     return IO_Nothing;
   elif line[1] = 't' then  # transformations
     Apply(out, TransformationNC);
@@ -134,7 +134,7 @@ end;
 #############################################################################
 
 InstallGlobalFunction(ReadGenerators,
-function(arg...)
+function(arg)
   local name, line_nr, file, decoder, i, obj, out;
 
   if Length(arg) = 1 then
@@ -201,7 +201,7 @@ function(arg...)
 end);
 
 InstallGlobalFunction(WriteGenerators,
-function(arg...)
+function(arg)
   local name, collcoll, mode, file, encoder, coll;
 
   if Length(arg) = 2 then
@@ -232,7 +232,7 @@ function(arg...)
     ErrorNoReturn("there should be 2, 3, or 4 arguments");
   fi;
 
-  if mode <> "a" and mode <> "w" then
+  if not (mode = "a" or mode = "w") then
     ErrorNoReturn("the 3rd argument is not \"a\" or \"w\"");
   elif IsString(name) then
     name := UserHomeExpand(name);
@@ -346,7 +346,7 @@ end);
 ################################################################################
 
 InstallGlobalFunction(ReadMultiplicationTable,
-function(arg...)
+function(arg)
   local name, line_nr, file, ReadMultiplicationTableLine, i, line, lines;
   if Length(arg) = 1 then
     name    := arg[1];
@@ -416,7 +416,7 @@ SEMIGROUPS.ReadMultiplicationTableLine := function(line, n)
 end;
 
 InstallGlobalFunction(WriteMultiplicationTable,
-function(arg...)
+function(arg)
   local name, coll, mode, file, str, i, j, k, n;
 
   if Length(arg) = 2 then
@@ -431,7 +431,7 @@ function(arg...)
     ErrorNoReturn("there must be 2 or 3 arguments");
   fi;
 
-  if mode <> "a" and mode <> "w" then
+  if not (mode = "a" or mode = "w") then
     ErrorNoReturn("the 3rd argument is not \"a\" or \"w\"");
   elif IsString(name) then
     name := UserHomeExpand(name);
@@ -531,7 +531,7 @@ function(str)
     fi;
   end;
 
-  # TODO use iter here? Store things in the iterator?
+  # TODO store str in iter
   record.ShallowCopy := function(_)
     local file, line;
     file := IO_CompressedFile(UserHomeExpand(str), "r");

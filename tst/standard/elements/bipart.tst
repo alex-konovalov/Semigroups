@@ -24,10 +24,10 @@ gap> N := 333;;
 gap> classes := [[1, 2, 3, -2], [4, -5], [5, -7], [6, -3, -4], [7], [-1],
 > [-6]];;
 gap> f := Bipartition(classes);
-<bipartition: [ 1, 2, 3, -2 ], [ 4, -5 ], [ 5, -7 ], [ 6, -3, -4 ], [ 7 ], 
+<bipartition: [ 1, 2, 3, -2 ], [ 4, -5 ], [ 5, -7 ], [ 6, -3, -4 ], [ 7 ],
  [ -1 ], [ -6 ]>
 gap> LeftProjection(f);
-<bipartition: [ 1, 2, 3, -1, -2, -3 ], [ 4, -4 ], [ 5, -5 ], [ 6, -6 ], 
+<bipartition: [ 1, 2, 3, -1, -2, -3 ], [ 4, -4 ], [ 5, -5 ], [ 6, -6 ],
  [ 7 ], [ -7 ]>
 
 # BipartitionTest3: different order of classes
@@ -40,7 +40,7 @@ gap> f := Bipartition([[1, 2, -3, -5, -6], [3, -2, -4], [4, 7],
 <bipartition: [ 1, 2, -3, -5, -6 ], [ 3, -2, -4 ], [ 4, 7 ], [ 5, -7, -8, -9 ]
   , [ 6 ], [ 8, 9, -1 ]>
 gap> LeftProjection(f);
-<bipartition: [ 1, 2, -1, -2 ], [ 3, -3 ], [ 4, 7 ], [ 5, -5 ], [ 6 ], 
+<bipartition: [ 1, 2, -1, -2 ], [ 3, -3 ], [ 4, 7 ], [ 5, -5 ], [ 6 ],
  [ 8, 9, -8, -9 ], [ -4, -7 ], [ -6 ]>
 
 # BipartitionTest4: ASSOCIATIVITY
@@ -87,7 +87,7 @@ true
 gap> f := Bipartition([[1, 2, 3], [4, -1, -3], [5, 6, -4, -5],
 > [-2], [-6]]);;
 gap> AsBipartition(f, 8);
-<bipartition: [ 1, 2, 3 ], [ 4, -1, -3 ], [ 5, 6, -4, -5 ], [ 7 ], [ 8 ], 
+<bipartition: [ 1, 2, 3 ], [ 4, -1, -3 ], [ 5, 6, -4, -5 ], [ 7 ], [ 8 ],
  [ -2 ], [ -6 ], [ -7 ], [ -8 ]>
 gap> AsBipartition(f, 6);
 <bipartition: [ 1, 2, 3 ], [ 4, -1, -3 ], [ 5, 6, -4, -5 ], [ -2 ], [ -6 ]>
@@ -126,7 +126,7 @@ gap> S := InverseSemigroup(
 > PartialPerm([1, 2, 3, 6, 8, 10], [2, 6, 7, 9, 1, 5]),
 > PartialPerm([1, 2, 3, 4, 6, 7, 8, 10], [3, 8, 1, 9, 4, 10, 5, 6]));;
 gap> AsBlockBijection(S.1);
-<block bijection: [ 1, -2 ], [ 2, -6 ], [ 3, -7 ], 
+<block bijection: [ 1, -2 ], [ 2, -6 ], [ 3, -7 ],
  [ 4, 5, 7, 9, 11, -3, -4, -8, -10, -11 ], [ 6, -9 ], [ 8, -1 ], [ 10, -5 ]>
 
 # BipartitionTest24: NaturalLeqBlockBijection
@@ -152,27 +152,27 @@ false
 gap> First(Idempotents(S), e -> e * g = f);
 <block bijection: [ 1, 2, -1, -2 ], [ 3, -3 ], [ 4, -4 ]>
 gap> Set(Filtered(S, f -> NaturalLeqBlockBijection(f, g)));
-[ <block bijection: [ 1, 2, 3, 4, -1, -2, -3, -4 ]>, 
-  <block bijection: [ 1, 2, 4, -1, -2, -3 ], [ 3, -4 ]>, 
-  <block bijection: [ 1, 3, 4, -3, -4 ], [ 2, -1, -2 ]>, 
-  <block bijection: [ 1, 4, -3 ], [ 2, 3, -1, -2, -4 ]>, 
+[ <block bijection: [ 1, 2, 3, 4, -1, -2, -3, -4 ]>,
+  <block bijection: [ 1, 2, 4, -1, -2, -3 ], [ 3, -4 ]>,
+  <block bijection: [ 1, 3, 4, -3, -4 ], [ 2, -1, -2 ]>,
+  <block bijection: [ 1, 4, -3 ], [ 2, 3, -1, -2, -4 ]>,
   <block bijection: [ 1, 4, -3 ], [ 2, -1, -2 ], [ 3, -4 ]> ]
 gap> Filtered(S, f -> ForAny(Idempotents(S), e -> e * f = g));
 [ <block bijection: [ 1, 4, -3 ], [ 2, -1, -2 ], [ 3, -4 ]> ]
 gap> Set(Filtered(S, f -> ForAny(Idempotents(S), e -> e * g = f)));
-[ <block bijection: [ 1, 2, 3, 4, -1, -2, -3, -4 ]>, 
-  <block bijection: [ 1, 2, 4, -1, -2, -3 ], [ 3, -4 ]>, 
-  <block bijection: [ 1, 3, 4, -3, -4 ], [ 2, -1, -2 ]>, 
-  <block bijection: [ 1, 4, -3 ], [ 2, 3, -1, -2, -4 ]>, 
+[ <block bijection: [ 1, 2, 3, 4, -1, -2, -3, -4 ]>,
+  <block bijection: [ 1, 2, 4, -1, -2, -3 ], [ 3, -4 ]>,
+  <block bijection: [ 1, 3, 4, -3, -4 ], [ 2, -1, -2 ]>,
+  <block bijection: [ 1, 4, -3 ], [ 2, 3, -1, -2, -4 ]>,
   <block bijection: [ 1, 4, -3 ], [ 2, -1, -2 ], [ 3, -4 ]> ]
 
 # BipartitionTest25: Factorization/EvaluateWord
 gap> S := DualSymmetricInverseMonoid(6);;
 gap> f := S.1 * S.2 * S.3 * S.2 * S.1;
-<block bijection: [ 1, 6, -4 ], [ 2, -2, -3 ], [ 3, -5 ], [ 4, -6 ], 
+<block bijection: [ 1, 6, -4 ], [ 2, -2, -3 ], [ 3, -5 ], [ 4, -6 ],
  [ 5, -1 ]>
 gap> EvaluateWord(GeneratorsOfSemigroup(S), Factorization(S, f));
-<block bijection: [ 1, 6, -4 ], [ 2, -2, -3 ], [ 3, -5 ], [ 4, -6 ], 
+<block bijection: [ 1, 6, -4 ], [ 2, -2, -3 ], [ 3, -5 ], [ 4, -6 ],
  [ 5, -1 ]>
 gap> S := PartitionMonoid(3);;
 gap> f := Bipartition([[1, -2, -3], [2, 3], [-1]]);;
@@ -420,7 +420,7 @@ true
 # bipartition: RightProjection
 gap> x := Bipartition([[1, 2, 4, 5, -1], [3, 6, -2], [-3, -6], [-4, -5]]);;
 gap> RightProjection(x);
-<bipartition: [ 1, -1 ], [ 2, -2 ], [ 3, 6 ], [ 4, 5 ], [ -3, -6 ], 
+<bipartition: [ 1, -1 ], [ 2, -2 ], [ 3, 6 ], [ 4, 5 ], [ -3, -6 ],
  [ -4, -5 ]>
 
 # bipartition: RightProjection, LeftProjection
@@ -438,34 +438,34 @@ gap> RightProjection(StarOp(x));
 gap> x := Bipartition([[1, -2], [2, 3, 4], [5, -1, -3], [6, 7, 8],
 > [9, 10, -7, -8, -9], [11], [-4, -5, -6], [-10, -11]]);;
 gap> RightProjection(x);
-<bipartition: [ 1, 3, -1, -3 ], [ 2, -2 ], [ 4, 5, 6 ], 
+<bipartition: [ 1, 3, -1, -3 ], [ 2, -2 ], [ 4, 5, 6 ],
  [ 7, 8, 9, -7, -8, -9 ], [ 10, 11 ], [ -4, -5, -6 ], [ -10, -11 ]>
 gap> LeftProjection(StarOp(x));
-<bipartition: [ 1, 3, -1, -3 ], [ 2, -2 ], [ 4, 5, 6 ], 
+<bipartition: [ 1, 3, -1, -3 ], [ 2, -2 ], [ 4, 5, 6 ],
  [ 7, 8, 9, -7, -8, -9 ], [ 10, 11 ], [ -4, -5, -6 ], [ -10, -11 ]>
 gap> LeftProjection(x);
-<bipartition: [ 1, -1 ], [ 2, 3, 4 ], [ 5, -5 ], [ 6, 7, 8 ], 
+<bipartition: [ 1, -1 ], [ 2, 3, 4 ], [ 5, -5 ], [ 6, 7, 8 ],
  [ 9, 10, -9, -10 ], [ 11 ], [ -2, -3, -4 ], [ -6, -7, -8 ], [ -11 ]>
 gap> RightProjection(StarOp(x));
-<bipartition: [ 1, -1 ], [ 2, 3, 4 ], [ 5, -5 ], [ 6, 7, 8 ], 
+<bipartition: [ 1, -1 ], [ 2, 3, 4 ], [ 5, -5 ], [ 6, 7, 8 ],
  [ 9, 10, -9, -10 ], [ 11 ], [ -2, -3, -4 ], [ -6, -7, -8 ], [ -11 ]>
 
 # bipartition: RightProjection, LeftProjection
 gap> x := Bipartition([[1, 3, -2, -4], [2], [4, 6, -1, -3, -5], [5, 8],
 > [7, -6, -9], [9, 10], [-7, -8, -10]]);
-<bipartition: [ 1, 3, -2, -4 ], [ 2 ], [ 4, 6, -1, -3, -5 ], [ 5, 8 ], 
+<bipartition: [ 1, 3, -2, -4 ], [ 2 ], [ 4, 6, -1, -3, -5 ], [ 5, 8 ],
  [ 7, -6, -9 ], [ 9, 10 ], [ -7, -8, -10 ]>
 gap> RightProjection(x);
-<bipartition: [ 1, 3, 5, -1, -3, -5 ], [ 2, 4, -2, -4 ], [ 6, 9, -6, -9 ], 
+<bipartition: [ 1, 3, 5, -1, -3, -5 ], [ 2, 4, -2, -4 ], [ 6, 9, -6, -9 ],
  [ 7, 8, 10 ], [ -7, -8, -10 ]>
 gap> LeftProjection(StarOp(x));
-<bipartition: [ 1, 3, 5, -1, -3, -5 ], [ 2, 4, -2, -4 ], [ 6, 9, -6, -9 ], 
+<bipartition: [ 1, 3, 5, -1, -3, -5 ], [ 2, 4, -2, -4 ], [ 6, 9, -6, -9 ],
  [ 7, 8, 10 ], [ -7, -8, -10 ]>
 gap> LeftProjection(x);
-<bipartition: [ 1, 3, -1, -3 ], [ 2 ], [ 4, 6, -4, -6 ], [ 5, 8 ], [ 7, -7 ], 
+<bipartition: [ 1, 3, -1, -3 ], [ 2 ], [ 4, 6, -4, -6 ], [ 5, 8 ], [ 7, -7 ],
  [ 9, 10 ], [ -2 ], [ -5, -8 ], [ -9, -10 ]>
 gap> RightProjection(StarOp(x));
-<bipartition: [ 1, 3, -1, -3 ], [ 2 ], [ 4, 6, -4, -6 ], [ 5, 8 ], [ 7, -7 ], 
+<bipartition: [ 1, 3, -1, -3 ], [ 2 ], [ 4, 6, -4, -6 ], [ 5, 8 ], [ 7, -7 ],
  [ 9, 10 ], [ -2 ], [ -5, -8 ], [ -9, -10 ]>
 
 # bipartition: Bipartition 1/3

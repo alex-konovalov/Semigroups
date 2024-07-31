@@ -19,7 +19,7 @@
 
 InstallMethod(NrDClasses, "for an inverse acting semigroup ideal rep",
 [IsInverseActingSemigroupRep and IsSemigroupIdeal],
-{I} -> Length(OrbSCC(LambdaOrb(I))) - 1);
+I -> Length(OrbSCC(LambdaOrb(I))) - 1);
 
 InstallMethod(NrDClasses, "for a regular acting semigroup ideal rep",
 [IsRegularActingSemigroupRep and IsSemigroupIdeal],
@@ -751,8 +751,7 @@ function(x, I)
     fi;
 
     # this function checks if <pt> has the same lambda-value as x
-    lookfunc := {lambdao, pt} -> pt = xx;
-    Enumerate(data, infinity, rec(lambdalookfunc := lookfunc));
+    Enumerate(data, infinity, rec(lambdalookfunc := {_, pt} -> pt = xx));
     l := PositionOfFound(o);
 
     # rho is not found, so f not in s
@@ -806,7 +805,8 @@ function(x, I)
       return false;
     fi;
 
-    lookfunc := {d, x} -> IsBound(lambdarhoht[l]) and IsBound(lambdarhoht[l][m]);
+    lookfunc := {data, x} -> IsBound(lambdarhoht[l])
+                             and IsBound(lambdarhoht[l][m]);
     data := Enumerate(data, infinity, lookfunc);
     if not IsBound(lambdarhoht[l]) or not IsBound(lambdarhoht[l][m]) then
       return false;

@@ -4,7 +4,7 @@
 KEXT_NAME = gapbind_demo
 KEXT_SOURCES = src/gapbind_demo.c src/gapbind14.cc
 
-KEXT_CXXFLAGS = -I../include -std=gnu++14
+KEXT_CXXFLAGS = -I../include -std=gnu++17
 KEXT_LDFLAGS = -lstdc++
 
 # ifndef GAP_KERNEL_MAJOR_VERSION

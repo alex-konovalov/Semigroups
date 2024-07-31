@@ -12,6 +12,10 @@
 DeclareProperty("CanUseLibsemigroupsCongruence",
                 CanComputeEquivalenceRelationPartition);
 
+# A semigroup satisfies this property if its congruences should belong to
+# CanUseLibsemigroupsCongruence.
+DeclareProperty("CanUseLibsemigroupsCongruences", IsSemigroup);
+
 InstallTrueMethod(CanComputeEquivalenceRelationPartition,
                   CanUseLibsemigroupsCongruence);
 

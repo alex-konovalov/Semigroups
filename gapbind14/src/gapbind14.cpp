@@ -18,8 +18,11 @@
 
 #include "gapbind14/gapbind14.hpp"
 
+#include <initializer_list>
 #include <stdio.h>   // for fprintf, stderr
 #include <string.h>  // for memcpy, strchr, strrchr
+
+#include <iostream>
 
 #include <unordered_set>  // for unordered_set, unordered_set<>::iterator
 
@@ -28,15 +31,62 @@
 #define GVAR_ENTRY(srcfile, name, nparam, params) \
   { #name, nparam, params, (GVarFunc) name, srcfile ":Func" #name }
 
+typedef Obj (*GVarFunc)(/*arguments*/);
+
 namespace gapbind14 {
+  ////////////////////////////////////////////////////////////////////////
+  // Helpers for interacting with GAP
+  ////////////////////////////////////////////////////////////////////////
+
+  Obj LibraryGVar_::operator()(std::string_view name) {
+    auto [it, inserted] = _map.emplace(name, _GAP_LibraryGVars.size());
+    if (inserted) {
+      if (_imported) {
+        std::string msg = "LibraryGVar: trying to access \"";
+        msg += name;
+        msg += "\" after GVars imported";
+        throw std::runtime_error(msg);
+      }
+      _GAP_LibraryGVars.emplace_back();
+      return _GAP_LibraryGVars.back();
+    } else {
+      return _GAP_LibraryGVars[it->second];
+    }
+  }
+
+  void LibraryGVar_::import_all() {
+    for (auto const &var : _map) {
+      std::cout << "Importing GAP GVar " << var.first << " from library"
+                << std::endl;
+      ImportGVarFromLibrary(var.first.c_str(), &_GAP_LibraryGVars[var.second]);
+    }
+    _imported = true;
+  }
+
+  UInt &TNums_::operator()(std::string_view name) {
+    auto [it, inserted] = _map.emplace(name, _GAP_TNums.size());
+    if (inserted) {
+      _GAP_TNums.emplace_back();
+      return _GAP_TNums.back();
+    } else {
+      return _GAP_TNums[it->second];
+    }
+  }
+
+  LibraryGVar_ LibraryGVar;
+  TNums_       TNums;
+
   UInt T_GAPBIND14_OBJ = 0;
 
-  namespace detail {
+  namespace {
+
     std::unordered_map<std::string, void (*)()> &init_funcs() {
       static std::unordered_map<std::string, void (*)()> inits;
       return inits;
     }
+  }  // namespace
 
+  namespace detail {
     int emplace_init_func(char const *module_name, void (*func)()) {
       bool inserted = init_funcs().emplace(module_name, func).second;
       if (!inserted) {
@@ -55,13 +105,19 @@ namespace gapbind14 {
     }
 
     gapbind14_subtype obj_subtype(Obj o) {
-      require_gapbind14_obj(o);
+      // require_gapbind14_obj(o);
       return reinterpret_cast<gapbind14_subtype>(ADDR_OBJ(o)[0]);
     }
 
     char const *copy_c_str(std::string const &str) {
       char *out = new char[str.size() + 1];  // we need extra char for NUL
       memcpy(out, str.c_str(), str.size() + 1);
+      return out;
+    }
+
+    char const *copy_c_str(std::string_view sv) {
+      char *out = new char[sv.size() + 1];  // we need extra char for NUL
+      memcpy(out, sv.begin(), sv.size() + 1);
       return out;
     }
 
@@ -140,6 +196,32 @@ namespace gapbind14 {
       x.push_back(StructGVarFunc({0, 0, 0, 0, 0}));
     }
     _funcs.push_back(StructGVarFunc({0, 0, 0, 0, 0}));
+    _filts.push_back(StructGVarFilt({0, 0, 0, 0, 0}));
+  }
+
+  ////////////////////////////////////////////////////////////////////////
+  // Declare user facing
+  ////////////////////////////////////////////////////////////////////////
+
+  void DeclareCategory(std::string_view name,
+                       std::string_view parent_category) {
+    module().add_category_to_declare(name, parent_category);
+    LibraryGVar(name);
+    LibraryGVar(parent_category);
+  }
+
+  void DeclareOperation(
+      std::string_view                               name,
+      std::initializer_list<std::string_view> const &filt_list) {
+    LibraryGVar(name);
+    LibraryGVar(filt_list);
+    module().add_operation_to_declare(name, filt_list);
+  }
+
+  void DeclareProperty(std::string_view name, std::string_view filt) {
+    LibraryGVar(name);
+    LibraryGVar(filt);
+    module().add_property_to_declare(name, filt);
   }
 
   namespace {
@@ -229,8 +311,9 @@ namespace gapbind14 {
       }
     }
 
+    // TODO renovate this
     Obj IsValidGapbind14Object(Obj self, Obj arg1) {
-      detail::require_gapbind14_obj(arg1);
+      // detail::require_gapbind14_obj(arg1);
       return (ADDR_OBJ(arg1)[1] != nullptr ? True : False);
     }
 
@@ -246,6 +329,14 @@ namespace gapbind14 {
   }
 
   void init_kernel(char const *name) {
+    // Things we want from the GAP library
+    LibraryGVar("DeclareCategory");
+    LibraryGVar("DeclareOperation");
+    LibraryGVar("DeclareProperty");
+    LibraryGVar("InstallMethod");
+    LibraryGVar("InstallEarlyMethod");
+    LibraryGVar("IsObject");
+
     static bool first_call = true;
     if (first_call) {
       first_call = false;
@@ -267,19 +358,53 @@ namespace gapbind14 {
       InitCopyGVar("TheTypeTGapBind14Obj", &TheTypeTGapBind14Obj);
     }
 
-    auto it = detail::init_funcs().find(std::string(name));
-    if (it == detail::init_funcs().end()) {
+    auto it = init_funcs().find(std::string(name));
+    if (it == init_funcs().end()) {
       throw std::runtime_error(std::string("No init function for module ")
                                + name + " found");
     }
     it->second();  // installs all functions in the current module.
     module().finalize();
 
+    for (auto const &tntr : module().tnums_to_register()) {
+      auto GAP_type_name = "The" + tntr.name + "Type";
+      auto GAP_type      = LibraryGVar(GAP_type_name);
+      std::cout << "Copying GVar " << GAP_type_name << std::endl;
+      InitCopyGVar(GAP_type_name.c_str(), &GAP_type);
+      UInt &GAP_tnum      = TNums(tntr.name);
+      auto  GAP_tnum_name = "T_" + tntr.name + "_OBJ";
+      Module::toupper(GAP_tnum_name);
+      std::cout << "Registering TNUM " << GAP_tnum_name << std::endl;
+
+      auto type_func = [GAP_type_name]() { return LibraryGVar(GAP_type_name); };
+      using Wild     = decltype(type_func);
+      size_t const n = detail::all_wilds<Wild>().size();
+      detail::all_wilds<Wild>().push_back(type_func);
+      GAP_tnum = RegisterPackageTNUM(
+          detail::copy_c_str(GAP_tnum_name),
+          detail::get_tame<decltype(&detail::tame<0, Wild>), Wild>(n));
+      // TODO copy the other functions from above
+      // TODO only install PrintObjFuncs if PrintObj is not one of the methods
+      // installed for objects of this type.
+      PrintObjFuncs[GAP_tnum] = TGapBind14ObjPrintFunc;
+    }
+
     InitHdlrFuncsFromTable(module().funcs());
+    InitHdlrFiltsFromTable(module().filters());
 
     for (auto ptr : module()) {
       InitHdlrFuncsFromTable(module().mem_funcs(ptr->name()));
     }
+    LibraryGVar.import_all();
+  }
+
+  // TODO move and rename this
+  std::vector<Obj> filter_list(std::vector<std::string_view> const &svs) {
+    std::vector<Obj> filt_list;
+    for (auto const &filt : svs) {
+      filt_list.push_back(LibraryGVar(filt));
+    }
+    return filt_list;
   }
 
   void init_library(char const *name) {
@@ -288,39 +413,54 @@ namespace gapbind14 {
       first_call = false;
       InitGVarFuncsFromTable(GVarFuncs);
     }
-    auto                 &m   = module();
-    StructGVarFunc const *tab = m.funcs();
 
-    // init functions from m in the record named name
-    // This is done to avoid polluting the global namespace
-    Obj global_rec = NEW_PREC(0);
-    SET_LEN_PREC(global_rec, 0);
+    InitGVarFuncsFromTable(module().funcs());
+    InitGVarFiltsFromTable(module().filters());
 
-    for (Int i = 0; tab[i].name != 0; i++) {
-      UInt gvar = GVarName(tab[i].name);
+    for (auto const &ctd : module().categories_to_declare()) {
+      std::cout << "Declared category " << ctd.name << std::endl;
+      CALL_2ARGS(LibraryGVar("DeclareCategory"),
+                 to_gap<std::string>()(ctd.name),
+                 LibraryGVar(ctd.parent));
+    }
+
+    for (auto const &otd : module().operations_to_declare()) {
+      CALL_2ARGS(LibraryGVar("DeclareOperation"),
+                 to_gap<std::string>()(otd.name),
+                 to_gap<std::vector<Obj>>()(filter_list(otd.filt_list)));
+      std::cout << "Declared operation " << otd.name << std::endl;
+    }
+
+    for (auto const &atd : module().properties_to_declare()) {
+      CALL_2ARGS(LibraryGVar("DeclareProperty"),
+                 to_gap<std::string>()(atd.name),
+                 LibraryGVar(atd.filt));
+      std::cout << "Declared property " << atd.name << std::endl;
+    }
+
+    size_t index = 0;
+    for (auto const &mti : module().methods_to_install()) {
+      Obj  GAP_op    = LibraryGVar(mti.name);
+      auto filt_list = filter_list(mti.filt_list);
+      // TODO must be an easier way of doing this, i.e. just add the global
+      // function as elsewhere to GAP and then call install method using that
+      UInt gvar = GVarName(mti.func.name);
       Obj  name = NameGVar(gvar);
-      Obj  args = ValidatedArgList(tab[i].name, tab[i].nargs, tab[i].args);
-      Obj  func = NewFunction(name, tab[i].nargs, args, tab[i].handler);
-      SetupFuncInfo(func, tab[i].cookie);
-      AssPRec(global_rec, RNamName(tab[i].name), func);
-    }
-    for (auto ptr : m) {
-      tab           = m.mem_funcs(ptr->name());
-      Obj class_rec = NEW_PREC(0);
-      SET_LEN_PREC(class_rec, 0);
+      Obj args = ValidatedArgList(mti.func.name, mti.func.nargs, mti.func.args);
+      Obj func = NewFunction(name, mti.func.nargs, args, mti.func.handler);
+      SetupFuncInfo(func, mti.func.cookie);
+      assert(mt.func.nargs == filt_list.size());
 
-      for (Int i = 0; tab[i].name != 0; i++) {
-        UInt gvar = GVarName(tab[i].name);
-        Obj  name = NameGVar(gvar);
-        Obj  args = ValidatedArgList(tab[i].name, tab[i].nargs, tab[i].args);
-        Obj  func = NewFunction(name, tab[i].nargs, args, tab[i].handler);
-        SetupFuncInfo(func, tab[i].cookie);
-        AssPRec(class_rec, RNamName(tab[i].name), func);
-      }
-      AssPRec(global_rec, RNamName(ptr->name().c_str()), class_rec);
+      CALL_4ARGS(LibraryGVar("InstallMethod"),
+                 GAP_op,
+                 // TODO deduction guides so that the template params aren't
+                 // required
+                 to_gap<std::string>()(mti.info_string),
+                 to_gap<std::vector<Obj>>()(filt_list),
+                 func);
+      std::cout << "Installed method for " << mti.name << " with "
+                << filt_list.size() << " args" << std::endl;
+      index++;
     }
-
-    MakeImmutable(global_rec);
-    AssReadOnlyGVar(GVarName(name), global_rec);
   }
 }  // namespace gapbind14

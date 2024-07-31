@@ -77,8 +77,9 @@ function(S)
 
   enum.map := NiceMonomorphism(S);
 
-  enum.NumberElement := {enum, x} ->
-    PositionCanonical(Range(enum!.map), x ^ enum!.map);
+  enum.NumberElement := function(enum, x)
+    return PositionCanonical(Range(enum!.map), x ^ enum!.map);
+  end;
 
   enum.ElementNumber := function(enum, nr)
     return EnumeratorCanonical(Range(enum!.map))[nr]
@@ -87,9 +88,14 @@ function(S)
 
   enum.Length := enum -> Size(S);
 
-  enum.Membership := {x, enum} -> x ^ enum!.map in Range(enum!.map);
+  enum.Membership := function(x, enum)
+    return x ^ enum!.map in Range(enum!.map);
+  end;
 
-  enum.IsBound\[\] := {enum, nr} -> nr <= Size(S);
+  # TODO store S in enum and use this below
+  enum.IsBound\[\] := function(_, nr)
+    return nr <= Size(S);
+  end;
 
   return EnumeratorByFunctions(S, enum);
 end);
@@ -195,7 +201,8 @@ end);
 InstallMethod(PrintString, "for a free monoid with known generators",
 [IsFreeMonoid and HasGeneratorsOfMonoid], String);
 
-BindGlobal("SEMIGROUPS_FreeSemigroupMonoidPrintObj",
+InstallMethod(PrintObj, "for a free monoid with known generators",
+[IsFreeMonoid and HasGeneratorsOfMonoid],
 function(M)
 
   if UserPreference("semigroups", "ViewObj") <> "semigroups-pkg" then
@@ -205,18 +212,6 @@ function(M)
   Print(PrintString(M));
   return;
 end);
-
-BindGlobal("SEMIGROUPS_FreeSemigroupMonoidString",
-function(M)
-  if UserPreference("semigroups", "ViewObj") <> "semigroups-pkg" then
-    TryNextMethod();
-  fi;
-  return String(M);
-end);
-
-InstallMethod(PrintObj, "for a free monoid with known generators",
-[IsFreeMonoid and HasGeneratorsOfMonoid],
-SEMIGROUPS_FreeSemigroupMonoidPrintObj);
 
 InstallMethod(String, "for a free semigroup with known generators",
 [IsFreeSemigroup and HasGeneratorsOfSemigroup],
@@ -235,7 +230,15 @@ InstallMethod(PrintString, "for a free semigroup with known generators",
 
 InstallMethod(PrintObj, "for a free semigroup with known generators",
 [IsFreeSemigroup and HasGeneratorsOfSemigroup],
-SEMIGROUPS_FreeSemigroupMonoidPrintObj);
+function(M)
+
+  if UserPreference("semigroups", "ViewObj") <> "semigroups-pkg" then
+    TryNextMethod();
+  fi;
+
+  Print(PrintString(M));
+  return;
+end);
 
 #############################################################################
 # Viewing and printing - free monoids and semigroups
@@ -265,12 +268,27 @@ end);
 
 InstallMethod(PrintString, "for an f.p. monoid with known generators",
 [IsFpMonoid and HasGeneratorsOfMonoid],
-SEMIGROUPS_FreeSemigroupMonoidString);
+function(M)
+
+  if UserPreference("semigroups", "ViewObj") <> "semigroups-pkg" then
+    TryNextMethod();
+  fi;
+
+  return String(M);
+end);
 
 InstallMethod(PrintObj, "for an f.p. monoid with known generators",
 [IsFpMonoid and HasGeneratorsOfMonoid],
 4,  # to beat the library method
-SEMIGROUPS_FreeSemigroupMonoidPrintObj);
+function(M)
+
+  if UserPreference("semigroups", "ViewObj") <> "semigroups-pkg" then
+    TryNextMethod();
+  fi;
+
+  Print(PrintString(M));
+  return;
+end);
 
 InstallMethod(ViewString, "for an f.p. monoid with known generators",
 [IsFpMonoid and HasGeneratorsOfMonoid],
@@ -312,12 +330,27 @@ end);
 
 InstallMethod(PrintString, "for an f.p. semigroup with known generators",
 [IsFpSemigroup and HasGeneratorsOfSemigroup],
-SEMIGROUPS_FreeSemigroupMonoidString);
+function(M)
+
+  if UserPreference("semigroups", "ViewObj") <> "semigroups-pkg" then
+    TryNextMethod();
+  fi;
+
+  return String(M);
+end);
 
 InstallMethod(PrintObj, "for an f.p. semigroup with known generators",
 [IsFpSemigroup and HasGeneratorsOfSemigroup],
 4,  # to beat the library method
-SEMIGROUPS_FreeSemigroupMonoidPrintObj);
+function(M)
+
+  if UserPreference("semigroups", "ViewObj") <> "semigroups-pkg" then
+    TryNextMethod();
+  fi;
+
+  Print(PrintString(M));
+  return;
+end);
 
 InstallMethod(ViewString, "for an f.p. semigroup with known generators",
 [IsFpSemigroup and HasGeneratorsOfSemigroup],
@@ -381,14 +414,14 @@ end);
 
 InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
 [IsFpMonoid, IsList],
-{filt, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsFpSemigroup, params));
+{_, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsFpSemigroup, params));
 
 # this doesn't work very well
 
 InstallMethod(RandomSemigroupCons, "for IsFpSemigroup and a list",
 [IsFpSemigroup, IsList],
-function(filt, params)
-  return AsSemigroup(filt,
+function(_, params)
+  return AsSemigroup(IsFpSemigroup,
                      CallFuncList(RandomSemigroup,
                                   Concatenation([IsTransformationSemigroup],
                                                  params)));
@@ -398,8 +431,8 @@ end);
 
 InstallMethod(RandomMonoidCons, "for IsFpMonoid and a list",
 [IsFpMonoid, IsList],
-function(filt, params)
-  return AsMonoid(filt,
+function(_, params)
+  return AsMonoid(IsFpMonoid,
                   CallFuncList(RandomMonoid,
                                Concatenation([IsTransformationMonoid],
                                               params)));
@@ -409,8 +442,8 @@ end);
 
 InstallMethod(RandomInverseSemigroupCons, "for IsFpSemigroup and a list",
 [IsFpSemigroup, IsList],
-function(filt, params)
-  return AsSemigroup(filt,
+function(_, params)
+  return AsSemigroup(IsFpSemigroup,
                      CallFuncList(RandomInverseSemigroup,
                                   Concatenation([IsPartialPermSemigroup],
                                                 params)));
@@ -420,16 +453,15 @@ end);
 
 InstallMethod(RandomInverseMonoidCons, "for IsFpMonoid and a list",
 [IsFpMonoid, IsList],
-function(filt, params)
-  return AsMonoid(filt,
+function(_, params)
+  return AsMonoid(IsFpMonoid,
                   CallFuncList(RandomInverseMonoid,
                                Concatenation([IsPartialPermMonoid],
                                               params)));
 end);
 
 InstallMethod(IsomorphismSemigroup, "for IsFpSemigroup and a semigroup",
-[IsFpSemigroup, IsSemigroup],
-{filt, S} -> IsomorphismFpSemigroup(S));
+[IsFpSemigroup, IsSemigroup], {_, S} -> IsomorphismFpSemigroup(S));
 
 InstallMethod(AsMonoid, "for an fp semigroup",
 [IsFpSemigroup],
@@ -441,8 +473,7 @@ function(S)
 end);
 
 InstallMethod(IsomorphismMonoid, "for IsFpMonoid and a semigroup",
-[IsFpMonoid, IsSemigroup],
-{filt, S} -> IsomorphismFpMonoid(S));
+[IsFpMonoid, IsSemigroup], {_, S} -> IsomorphismFpMonoid(S));
 
 # same method for ideals
 
@@ -693,11 +724,11 @@ end);
 
 InstallMethod(IsomorphismFpMonoid, "for an fp monoid",
 [IsFpMonoid],
-function(M)
-  return SemigroupIsomorphismByImagesNC(M,
-                                        M,
-                                        GeneratorsOfSemigroup(M),
-                                        GeneratorsOfSemigroup(M));
+function(S)
+  return SemigroupIsomorphismByImagesNC(S,
+                                        S,
+                                        GeneratorsOfSemigroup(S),
+                                        GeneratorsOfSemigroup(S));
 end);
 
 # The next method is copied directly from the GAP library the only change is
@@ -1182,7 +1213,7 @@ function(gens, inputstring)
         i := 1;
         while i <= Size(word) do
             # if there are no brackets the character is left as it is.
-            if word[i] <> '(' then
+            if not word[i] = '(' then
                 if product = "" then
                   product := chartoel(word[i]);
                 else

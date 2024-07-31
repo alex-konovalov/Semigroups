@@ -120,8 +120,7 @@ function(_, basedomain, l)
   return b;
 end);
 
-InstallMethod(Rank, "for a plist rowbasis",
-[IsPlistRowBasisOverFiniteFieldRep],
+InstallMethod(Rank, "for a plist rowbasis", [IsPlistRowBasisOverFiniteFieldRep],
 v -> Length(v!.rows));
 
 InstallMethod(\=, "for an rowbasis",

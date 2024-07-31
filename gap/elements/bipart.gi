@@ -452,8 +452,7 @@ function(f, g)
 end);
 
 InstallMethod(\^, "for a bipartition and permutation",
-[IsBipartition, IsPerm],
-{f, p} -> p ^ -1 * f * p);
+[IsBipartition, IsPerm], {f, p} -> p ^ -1 * f * p);
 
 # Other operators
 
@@ -485,24 +484,21 @@ function(x)
 end);
 
 InstallMethod(AsBipartition, "for a partial perm and zero",
-[IsPartialPerm, IsZeroCyc],
-{f, n} -> Bipartition([]));
+[IsPartialPerm, IsZeroCyc], {f, n} -> Bipartition([]));
 
 InstallMethod(AsBipartition, "for a transformation",
 [IsTransformation], x -> AsBipartition(x, DegreeOfTransformation(x)));
 
 InstallMethod(AsBipartition, "for a transformation and zero",
-[IsTransformation, IsZeroCyc],
-{f, n} -> Bipartition([]));
+[IsTransformation, IsZeroCyc], {f, n} -> Bipartition([]));
 
 InstallMethod(AsBipartition, "for a bipartition", [IsBipartition], IdFunc);
 
 InstallMethod(AsBipartition, "for a bipartition", [IsBipartition, IsZeroCyc],
 {f, n} -> Bipartition([]));
 
-InstallMethod(AsBipartition, "for a pbr and pos int",
-[IsPBR, IsZeroCyc],
-{x, deg} -> Bipartition([]));
+InstallMethod(AsBipartition, "for a pbr and zero", [IsPBR, IsZeroCyc],
+{f, n} -> Bipartition([]));
 
 InstallMethod(AsBipartition, "for a pbr and pos int",
 [IsPBR, IsPosInt],
@@ -592,12 +588,12 @@ function(coll)
 
   str := "\>[ ";
   for i in [1 .. Length(coll)] do
-    if i <> 1 then
+    if not i = 1 then
       Append(str, " ");
     fi;
     Append(str, "\>");
     Append(str, PrintString(coll[i]));
-    if i <> Length(coll) then
+    if not i = Length(coll) then
       Append(str, ",\<\n");
     else
       Append(str, " ]\<\n");
@@ -612,8 +608,7 @@ InstallMethod(DegreeOfBipartitionCollection, "for a bipartition semigroup",
 [IsBipartitionSemigroup], DegreeOfBipartitionSemigroup);
 
 InstallMethod(DegreeOfBipartitionCollection, "for a bipartition collection",
-[IsBipartitionCollection],
-{coll} -> DegreeOfBipartition(coll[1]));
+[IsBipartitionCollection], coll -> DegreeOfBipartition(coll[1]));
 
 #############################################################################
 # All of the methods in this section could be done in C/C++
@@ -991,5 +986,4 @@ function(x)
 end);
 
 InstallMethod(IndexPeriodOfSemigroupElement, "for a bipartition",
-[IsBipartition],
-x -> SEMIGROUPS.IndexPeriodByRank(x, RankOfBipartition));
+[IsBipartition], x -> SEMIGROUPS.IndexPeriodByRank(x, RankOfBipartition));

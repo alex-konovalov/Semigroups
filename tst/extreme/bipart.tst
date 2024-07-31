@@ -72,12 +72,14 @@ gap> ForAll(triples, x -> ((x[1] * x[2]) * x[3]) = (x[1] * (x[2] * x[3])));
 true
 
 # BipartitionTest5: EMBEDDING into T_n
-gap> l := List([1, 2, 3, 4, 5, 15, 35, 1999, 64999, 65000], RandomTransformation);;
+gap> l := List([1, 2, 3, 4, 5, 15, 35, 1999, 64999, 65000],
+>              RandomTransformation);;
 gap> ForAll(l, t -> t = AsTransformation(AsBipartition(t)));
 true
 
 # BipartitionTest6: checking IsTransBipartitition
-gap> l := List([1, 2, 3, 4, 5, 15, 35, 1999, 30101, 54321], RandomTransformation);;
+gap> l := List([1, 2, 3, 4, 5, 15, 35, 1999, 30101, 54321],
+>              RandomTransformation);;
 gap> ForAll(l, t -> IsTransBipartition(AsBipartition(t)));
 true
 

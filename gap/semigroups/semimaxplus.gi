@@ -62,11 +62,15 @@ _InstallRandom0 := function(params)
 
   InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
   [ValueGlobal(IsXSemigroup), IsList],
-  {_, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsSemigroup, params));
+  function(_, params)
+    return SEMIGROUPS_ProcessRandomArgsCons(IsSemigroup, params);
+  end);
 
   InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
   [ValueGlobal(IsXMonoid), IsList],
-  {_, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsSemigroup, params));
+  function(_, params)
+    return SEMIGROUPS_ProcessRandomArgsCons(IsSemigroup, params);
+  end);
 
   InstallMethod(RandomSemigroupCons,
   Concatenation("for ", IsXSemigroup, " and a list"),
@@ -202,9 +206,8 @@ function(_, params)
   return params;
 end);
 
-InstallMethod(SEMIGROUPS_ProcessRandomArgsCons,
-[IsNTPMatrixMonoid, IsList], {filt, params}
--> SEMIGROUPS_ProcessRandomArgsCons(IsNTPMatrixSemigroup, params));
+InstallMethod(SEMIGROUPS_ProcessRandomArgsCons, [IsNTPMatrixMonoid, IsList],
+{_, params} -> SEMIGROUPS_ProcessRandomArgsCons(IsNTPMatrixSemigroup, params));
 
 InstallMethod(RandomSemigroupCons,
 "for IsNTPMatrixSemigroup and a list",
@@ -254,7 +257,9 @@ for _IsXMatrix in ["IsMaxPlusMatrix",
   InstallMethod(IsomorphismSemigroup,
   Concatenation("for ", _IsXSemigroup, " and a ", _IsXSemigroup),
   [ValueGlobal(_IsXSemigroup), ValueGlobal(_IsXSemigroup)],
-  {filter, S} -> SemigroupIsomorphismByFunctionNC(S, S, IdFunc, IdFunc));
+  function(_, S)
+    return SemigroupIsomorphismByFunctionNC(S, S, IdFunc, IdFunc);
+  end);
 
 od;
 
@@ -288,7 +293,9 @@ for _IsXMatrix in ["IsTropicalMaxPlusMatrix",
   InstallMethod(IsomorphismSemigroup,
   Concatenation("for ", _IsXSemigroup, ", and a semigroup"),
   [ValueGlobal(_IsXSemigroup), IsSemigroup],
-  {filter, S} -> IsomorphismSemigroup(filter, 1, S));
+  function(filter, S)
+    return IsomorphismSemigroup(filter, 1, S);
+  end);
 
   InstallMethod(IsomorphismSemigroup,
   Concatenation("for ", _IsXSemigroup, " and a ", _IsXSemigroup),
@@ -326,7 +333,7 @@ end);
 InstallMethod(IsomorphismSemigroup,
 "for IsNTPMatrixSemigroup and a semigroup",
 [IsNTPMatrixSemigroup, IsSemigroup],
-{filter, S} -> IsomorphismSemigroup(IsNTPMatrixSemigroup, 1, 1, S));
+{_, S} -> IsomorphismSemigroup(IsNTPMatrixSemigroup, 1, 1, S));
 
 InstallMethod(IsomorphismSemigroup,
 "for IsNTPMatrixSemigroup, pos int, pos int, and a semigroup",
@@ -347,9 +354,10 @@ end);
 ## These are installed inside a function so that the value of IsXMatrix and
 ## IsXSemigroup are retained as local variables.
 
-_InstallAsMonoid := function(filter)
-  local IsXSemigroup, IsXMonoid;
+_InstallIsomorphism0 := function(filter)
+  local IsXMatrix, IsXSemigroup, IsXMonoid;
 
+  IsXMatrix := filter;
   IsXSemigroup := Concatenation(filter, "Semigroup");
   IsXMonoid := Concatenation(filter, "Monoid");
 
@@ -362,30 +370,6 @@ _InstallAsMonoid := function(filter)
     fi;
     return Range(IsomorphismMonoid(ValueGlobal(IsXMonoid), S));
   end);
-end;
-
-for _IsXMatrix in ["IsMaxPlusMatrix",
-                   "IsMinPlusMatrix",
-                   "IsTropicalMaxPlusMatrix",
-                   "IsTropicalMinPlusMatrix",
-                   "IsProjectiveMaxPlusMatrix",
-                   "IsNTPMatrix",
-                   "IsIntegerMatrix"] do
-  _InstallAsMonoid(_IsXMatrix);
-od;
-
-Unbind(_IsXMatrix);
-Unbind(_InstallAsMonoid);
-
-## These are installed inside a function so that the value of IsXMatrix and
-## IsXSemigroup are retained as local variables.
-
-_InstallIsomorphism0 := function(filter)
-  local IsXMatrix, IsXSemigroup, IsXMonoid;
-
-  IsXMatrix := filter;
-  IsXSemigroup := Concatenation(filter, "Semigroup");
-  IsXMonoid := Concatenation(filter, "Monoid");
 
   InstallMethod(IsomorphismMonoid,
   Concatenation("for ", IsXMonoid, " and a semigroup"),
@@ -395,7 +379,9 @@ _InstallIsomorphism0 := function(filter)
   InstallMethod(IsomorphismMonoid,
   Concatenation("for ", IsXMonoid, " and a monoid"),
   [ValueGlobal(IsXMonoid), IsMonoid],
-  {filter, S} -> IsomorphismSemigroup(ValueGlobal(IsXSemigroup), S));
+  function(_, S)
+    return IsomorphismSemigroup(ValueGlobal(IsXSemigroup), S);
+  end);
 
   if IsXMatrix <> "IsIntegerMatrix" then
     InstallMethod(IsomorphismSemigroup,
@@ -444,6 +430,16 @@ _InstallIsomorphism1 := function(filter)
   IsXSemigroup := Concatenation(filter, "Semigroup");
   IsXMonoid := Concatenation(filter, "Monoid");
 
+  InstallMethod(AsMonoid,
+  Concatenation("for a semigroup in ", IsXSemigroup),
+  [ValueGlobal(IsXSemigroup)],
+  function(S)
+    if MultiplicativeNeutralElement(S) = fail then
+      return fail;  # so that we do the same as the GAP/ref manual says
+    fi;
+    return Range(IsomorphismMonoid(ValueGlobal(IsXMonoid), S));
+  end);
+
   InstallMethod(IsomorphismMonoid,
   Concatenation("for ", IsXMonoid, ", pos int, and a semigroup"),
   [ValueGlobal(IsXMonoid), IsPosInt, IsSemigroup],
@@ -464,7 +460,9 @@ _InstallIsomorphism1 := function(filter)
   InstallMethod(IsomorphismMonoid,
   Concatenation("for ", IsXMonoid, " and a semigroup"),
   [ValueGlobal(IsXMonoid), IsSemigroup],
-  {filter, S} -> IsomorphismMonoid(filter, 1, S));
+  function(filter, S)
+    return IsomorphismMonoid(filter, 1, S);
+  end);
 
   InstallMethod(IsomorphismMonoid,
   Concatenation("for ", IsXMonoid, ", and a semigroup in ", IsXSemigroup),
@@ -478,8 +476,9 @@ _InstallIsomorphism1 := function(filter)
   InstallMethod(IsomorphismMonoid,
   Concatenation("for ", IsXMonoid, ", pos int, and a monoid"),
   [ValueGlobal(IsXMonoid), IsPosInt, IsMonoid],
-  {filter, threshold, S} ->
-  IsomorphismSemigroup(ValueGlobal(IsXSemigroup), threshold, S));
+  function(_, threshold, S)
+    return IsomorphismSemigroup(ValueGlobal(IsXSemigroup), threshold, S);
+  end);
 
   InstallMethod(IsomorphismSemigroup,
   Concatenation("for ", IsXSemigroup,
@@ -505,7 +504,9 @@ _InstallIsomorphism1 := function(filter)
                 " and a transformation semigroup with generators"),
   [ValueGlobal(IsXSemigroup),
    IsTransformationSemigroup and HasGeneratorsOfSemigroup],
-  {filt, S} -> IsomorphismSemigroup(filt, 1, S));
+  function(filt, S)
+    return IsomorphismSemigroup(filt, 1, S);
+  end);
 end;
 
 for _IsXMatrix in ["IsTropicalMaxPlusMatrix",
@@ -520,6 +521,15 @@ Unbind(_InstallIsomorphism1);
 ## Isomorphism from a transformation semigroup to a matrix semigroup
 ## 2 additional parameters!!!
 #############################################################################
+
+InstallMethod(AsMonoid, "for an ntp matrix semigroup",
+[IsNTPMatrixSemigroup],
+function(S)
+  if MultiplicativeNeutralElement(S) = fail then
+    return fail;  # so that we do the same as the GAP/ref manual says
+  fi;
+  return Range(IsomorphismMonoid(IsNTPMatrixMonoid, S));
+end);
 
 InstallMethod(IsomorphismMonoid,
 "for IsNTPMatrixMonoid, pos int, pos int, and a semigroup",
@@ -556,7 +566,7 @@ end);
 InstallMethod(IsomorphismMonoid,
 "for IsNTPMatrixMonoid, pos int, pos int, and a semigroup",
 [IsNTPMatrixMonoid, IsPosInt, IsPosInt, IsMonoid],
-{filter, threshold, period, S}
+{_, threshold, period, S}
 -> IsomorphismSemigroup(IsNTPMatrixSemigroup, threshold, period, S));
 
 InstallMethod(IsomorphismSemigroup,

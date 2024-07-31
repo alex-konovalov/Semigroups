@@ -283,7 +283,6 @@ function(S)
                          WrappedTwoSidedCongruence);
 end);
 
-InstallMethod(TrivialCongruence,
-"for a graph inverse semigroup",
+InstallMethod(TrivialCongruence, "for a graph inverse semigroup",
 [IsGraphInverseSemigroup],
 S -> AsCongruenceByWangPair(SemigroupCongruence(S, [])));

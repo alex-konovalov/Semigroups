@@ -54,13 +54,23 @@ function(I)
   en := EnumeratorCanonical(SupersemigroupOfIdeal(I));
 
   record := rec();
-  # TODO store en in enum
-  record.NumberElement :=
-  {enum, elt} -> Position(PositionsInSupersemigroup(I), Position(en, elt));
+  # TODO store I in record, and use that in the functions below
+  # TODO store en in record, and use that in the functions below
+  record.NumberElement := function(_, elt)
+    return Position(PositionsInSupersemigroup(I), Position(en, elt));
+  end;
 
-  record.ElementNumber := {enum, nr} -> en[PositionsInSupersemigroup(I)[nr]];
+  # TODO store I in record, and use that in the functions below
+  # TODO store en in record, and use that in the functions below
+  record.ElementNumber := function(_, nr)
+    return en[PositionsInSupersemigroup(I)[nr]];
+  end;
 
-  record.IsBound\[\] := {enum, nr} -> IsBound(PositionsInSupersemigroup(I)[nr]);
+  # TODO store I in record, and use that in the functions below
+  # TODO store en in record, and use that in the functions below
+  record.IsBound\[\] := function(_, nr)
+    return IsBound(PositionsInSupersemigroup(I)[nr]);
+  end;
 
   record.Length := enum -> Length(PositionsInSupersemigroup(I));
 

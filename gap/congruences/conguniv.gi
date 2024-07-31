@@ -55,8 +55,7 @@ function(C)
   Print(">");
 end);
 
-InstallMethod(\=,
-"for two universal semigroup congruences",
+InstallMethod(\=, "for two universal semigroup congruences",
 [IsUniversalSemigroupCongruence, IsUniversalSemigroupCongruence],
 {lhop, rhop} -> Range(lhop) = Range(rhop));
 
@@ -80,13 +79,12 @@ InstallMethod(\=,
 "for universal congruence and semigroup congruence with generating pairs",
 [IsSemigroupCongruence and HasGeneratingPairsOfMagmaCongruence,
  IsUniversalSemigroupCongruence],
-{C, U} -> U = C);
+ {C, U} -> U = C);
 
 InstallMethod(CongruenceTestMembershipNC,
 "for universal semigroup congruence and two multiplicative elements",
 [IsUniversalSemigroupCongruence,
- IsMultiplicativeElement, IsMultiplicativeElement],
-ReturnTrue);
+ IsMultiplicativeElement, IsMultiplicativeElement], ReturnTrue);
 
 InstallMethod(IsSubrelation,
 "for a universal semigroup congruence and a semigroup congruence",
@@ -169,8 +167,7 @@ function(U, C)
   return C;
 end);
 
-InstallMethod(EquivalenceClasses,
-"for universal semigroup congruence",
+InstallMethod(EquivalenceClasses, "for universal semigroup congruence",
 [IsUniversalSemigroupCongruence],
 C -> [EquivalenceClassOfElement(C, Representative(Range(C)))]);
 
@@ -193,7 +190,7 @@ function(C, x)
 end);
 
 InstallMethod(\in,
-"for associative element and universal semigroup congruence class",
+"for mult. element and universal semigroup congruence class",
 [IsMultiplicativeElement, IsUniversalSemigroupCongruenceClass],
 {x, class} -> x in Parent(class));
 

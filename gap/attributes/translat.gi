@@ -48,10 +48,8 @@ end;
 
 SEMIGROUPS.HasEasyBitranslationsGenerators := function(T)
   local S;
-
   S := UnderlyingSemigroup(T);
-  return IsRectangularBand(S) or
-         IsMonogenicSemigroup(S);
+  return IsRectangularBand(S) or IsMonogenicSemigroup(S);
 end;
 
 # Hash translations by their underlying transformations
@@ -852,10 +850,11 @@ function(L, map)
   S    := UnderlyingSemigroup(L);
   reps := UnderlyingRepresentatives(L);
 
-  if S <> Source(map) or Source(map) <> Range(map) then
+  if not (S = Source(map) and Source(map) = Range(map)) then
     ErrorNoReturn("the domain and range of the second argument must be ",
                   "the underlying semigroup of the first");
-  elif ForAny(reps, s -> ForAny(S, t -> (s ^ map) * t <> (s * t) ^ map)) then
+  fi;
+  if ForAny(reps, s -> ForAny(S, t -> (s ^ map) * t <> (s * t) ^ map)) then
     ErrorNoReturn("the mapping given must define a left translation");
   fi;
 
@@ -871,11 +870,12 @@ function(L, l)
   S    := UnderlyingSemigroup(L);
   reps := UnderlyingRepresentatives(L);
 
-  if Length(l) <> Length(reps) then
+  if not Length(l) = Length(reps) then
     ErrorNoReturn("the second argument must map indices of representatives ",
                   "to indices of elements of the semigroup of the first ",
                   "argument");
-  elif not ForAll(l, y -> IsPosInt(y) and y <= Size(S)) then
+  fi;
+  if not ForAll(l, y -> IsPosInt(y) and y <= Size(S)) then
     ErrorNoReturn("the second argument must map indices of representatives ",
                   "to indices of elements of the semigroup of the first ",
                   "argument");
@@ -938,10 +938,11 @@ function(R, map)
   S    := UnderlyingSemigroup(R);
   reps := UnderlyingRepresentatives(R);
 
-  if S <> Source(map) or Source(map) <> Range(map) then
+  if not (S = Source(map) and Source(map) = Range(map)) then
     ErrorNoReturn("the domain and range of the second argument must be ",
                   "the underlying semigroup of the first");
-  elif ForAny(reps, s -> ForAny(S, t -> s * (t ^ map) <> (s * t) ^ map)) then
+  fi;
+  if ForAny(reps, s -> ForAny(S, t -> s * (t ^ map) <> (s * t) ^ map)) then
     ErrorNoReturn("the mapping given must define a right translation");
   fi;
 
@@ -957,11 +958,12 @@ function(R, r)
   S    := UnderlyingSemigroup(R);
   reps := UnderlyingRepresentatives(R);
 
-  if Length(r) <> Length(reps) then
+  if not Length(r) = Length(reps) then
     ErrorNoReturn("the second argument must map indices of representatives ",
                   "to indices of elements of the semigroup of the first ",
                   "argument");
-  elif not ForAll(r, y -> IsPosInt(y) and y <= Size(S)) then
+  fi;
+  if not ForAll(r, y -> IsPosInt(y) and y <= Size(S)) then
     ErrorNoReturn("the second argument must map indices of representatives ",
                   "to indices of elements of the semigroup of the first ",
                   "argument");
@@ -1048,8 +1050,8 @@ function(H, l, r)
   L := LeftTranslationsSemigroupOfFamily(FamilyObj(l));
   R := RightTranslationsSemigroupOfFamily(FamilyObj(r));
 
-  if UnderlyingSemigroup(L) <> S or UnderlyingSemigroup(R) <> S then
-    ErrorNoReturn("each argument must have the same underlying semigroup");
+  if not (UnderlyingSemigroup(L) = S and UnderlyingSemigroup(R) = S) then
+      ErrorNoReturn("each argument must have the same underlying semigroup");
   fi;
 
   l_reps := UnderlyingRepresentatives(L);
@@ -1357,9 +1359,8 @@ function(T)
     TryNextMethod();
   elif IsLeftTranslationsSemigroup(T) then
     return SEMIGROUPS.LeftTranslationsBacktrack(T);
-  else
-    return SEMIGROUPS.RightTranslationsBacktrack(T);
   fi;
+  return SEMIGROUPS.RightTranslationsBacktrack(T);
 end);
 
 InstallMethod(AsList, "for a translational hull",
@@ -1648,8 +1649,8 @@ InstallMethod(\=, "for bitranslations",
 IsIdenticalObj, [IsBitranslation, IsBitranslation],
 {x, y} -> x![1] = y![1] and x![2] = y![2]);
 
-InstallMethod(\<, "for bitranslations", IsIdenticalObj,
-[IsBitranslation, IsBitranslation],
+InstallMethod(\<, "for bitranslations",
+IsIdenticalObj, [IsBitranslation, IsBitranslation],
 {x, y} -> x![1] < y![1] or (x![1] = y![1] and x![2] < y![2]));
 
 InstallMethod(UnderlyingSemigroup,

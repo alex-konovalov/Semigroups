@@ -190,23 +190,18 @@ function(C, elm)
   return _SimpleClassFromRMSclass(C, class);
 end);
 
-InstallMethod(NrEquivalenceClasses,
-"for a (0-)simple semigroup congruence",
-[IsSimpleSemigroupCongruence],
-C -> NrEquivalenceClasses(C!.rmscong));
+InstallMethod(NrEquivalenceClasses, "for a (0-)simple semigroup congruence",
+[IsSimpleSemigroupCongruence], C -> NrEquivalenceClasses(C!.rmscong));
 
 InstallMethod(\in,
 "for a multiplicative element and a (0-)simple semigroup congruence class",
 [IsMultiplicativeElement, IsSimpleSemigroupCongruenceClass],
 {x, class} -> x ^ EquivalenceClassRelation(class)!.iso in class!.rmsclass);
 
-InstallMethod(Size,
-"for a (0-)simple semigroup congruence class",
-[IsSimpleSemigroupCongruenceClass],
-{class} -> Size(class!.rmsclass));
+InstallMethod(Size, "for a (0-)simple semigroup congruence class",
+[IsSimpleSemigroupCongruenceClass], class -> Size(class!.rmsclass));
 
-InstallMethod(\=,
-"for two (0-)simple semigroup congruence classes",
+InstallMethod(\=, "for two (0-)simple semigroup congruence classes",
 [IsSimpleSemigroupCongruenceClass, IsSimpleSemigroupCongruenceClass],
 {lhop, rhop} -> lhop!.rmsclass = rhop!.rmsclass);
 
@@ -220,8 +215,7 @@ function(C)
                x -> [x[1] ^ map, x[2] ^ map]);
 end);
 
-InstallMethod(IsSubrelation,
-"for two (0-)simple semigroup congruences",
+InstallMethod(IsSubrelation, "for two (0-)simple semigroup congruences",
 [IsSimpleSemigroupCongruence, IsSimpleSemigroupCongruence],
 {lhop, rhop} -> IsSubrelation(lhop!.rmscong, rhop!.rmscong));
 

@@ -30,9 +30,11 @@ BIPART_RIGHT_BLOCKS);
 
 InstallMethod(ExtRepOfObj, "for blocks", [IsBlocks], BLOCKS_EXT_REP);
 
-InstallMethod(ChooseHashFunction, "for blocks",
-[IsBlocks, IsInt],
-{_, hashlen} -> rec(func := BLOCKS_HASH, data := hashlen));
+InstallMethod(ChooseHashFunction, "for blocks", [IsBlocks, IsInt],
+function(_, hashlen)
+  return rec(func := BLOCKS_HASH,
+             data := hashlen);
+end);
 
 InstallMethod(DegreeOfBlocks, "for blocks", [IsBlocks], BLOCKS_DEGREE);
 InstallMethod(RankOfBlocks, "for blocks", [IsBlocks], BLOCKS_RANK);

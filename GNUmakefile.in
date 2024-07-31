@@ -3,7 +3,7 @@
 #
 KEXT_NAME = semigroups
 
-KEXT_CXXFLAGS = @LIBSEMIGROUPS_CFLAGS@ -std=gnu++14 -O3
+KEXT_CXXFLAGS = @LIBSEMIGROUPS_CFLAGS@ -std=gnu++17 -O3
 KEXT_LDFLAGS = @LIBSEMIGROUPS_RPATH@ @LIBSEMIGROUPS_LIBS@
 
 # configure settings
@@ -30,6 +30,7 @@ KEXT_SOURCES += src/froidure-pin-pperm.cpp
 KEXT_SOURCES += src/froidure-pin-transf.cpp
 KEXT_SOURCES += src/pkg.cpp
 KEXT_SOURCES += src/to_gap.cpp
+KEXT_SOURCES += src/words.cpp
 KEXT_SOURCES += gapbind14/src/gapbind14.cpp
 
 KEXT_CPPFLAGS = -Igapbind14/include/
@@ -47,9 +48,9 @@ ifdef WITH_INCLUDED_LIBSEMIGROUPS
 # the sources, or otherwise we should stop make installing into bin
 ifdef LIBSEMIGROUPS_HPCOMBI_ENABLED
 KEXT_CPPFLAGS += -Ilibsemigroups/extern/HPCombi/include
-KEXT_CPPFLAGS += -Ilibsemigroups/extern/HPCombi/include/fallback
+KEXT_CPPFLAGS += -Ilibsemigroups/extern/HPCombi/third_party/
 endif
-KEXT_CPPFLAGS += -Ilibsemigroups/extern/fmt-8.0.1/include
+KEXT_CPPFLAGS += -Ilibsemigroups/extern/fmt-10.1.1/include
 KEXT_CPPFLAGS += -Ilibsemigroups/include
 endif
 KEXT_CPPFLAGS += -DFMT_HEADER_ONLY

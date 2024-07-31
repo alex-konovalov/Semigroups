@@ -31,6 +31,13 @@ if not IsBoundGlobal("IsTGapBind14Obj") then
   DeclareCategory("IsTGapBind14Obj", IsObject);
   BindGlobal("TheTypeTGapBind14Obj",
              NewType(NewFamily("TGapBind14ObjFamily"), IsTGapBind14Obj));
+
+  BindGlobal("TheWordsType",
+             NewType(NewFamily("WordsFamily"), IsWords and IsInternalRep));
+  BindGlobal("TheStringsType",
+             NewType(NewFamily("StringsFamily"), IsStrings and IsInternalRep));
+  BindGlobal("TheToWordType",
+             NewType(NewFamily("ToWordFamily"), IsToWord and IsInternalRep));
 fi;
 
 BindGlobal("SEMIGROUPS", rec());
@@ -74,6 +81,7 @@ ReadPackage("semigroups", "gap/elements/trans.gd");
 ReadPackage("semigroups", "gap/libsemigroups/fpsemi.gd");
 ReadPackage("semigroups", "gap/libsemigroups/froidure-pin.gd");
 ReadPackage("semigroups", "gap/libsemigroups/sims1.gd");
+ReadPackage("semigroups", "gap/libsemigroups/ranges.gd");
 
 ReadPackage("semigroups", "gap/main/froidure-pin.gd");
 ReadPackage("semigroups", "gap/main/semiact.gd");

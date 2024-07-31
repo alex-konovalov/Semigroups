@@ -48,33 +48,16 @@ Q -> CanUseLibsemigroupsCongruence(QuotientSemigroupCongruence(Q)));
 ###########################################################################
 
 DeclareOperation("FroidurePinMemFnRec", [IsSemigroup]);
-DeclareOperation("FroidurePinMemFnRec",
-                 [IsSemigroup, IsListOrCollection]);
 
-InstallMethod(FroidurePinMemFnRec, "for a semigroup",
-[IsSemigroup], S -> FroidurePinMemFnRec(S, []));
-
-InstallMethod(FroidurePinMemFnRec, "for a semigroup",
-[IsSemigroup, IsListOrCollection], {S, coll} -> FroidurePinMemFnRec(S));
-
-InstallMethod(FroidurePinMemFnRec,
-"for a transformation semigroup and list or coll.",
-[IsTransformationSemigroup, IsListOrCollection],
-function(S, coll)
-  local N;
-  N := DegreeOfTransformationSemigroup(S);
-  if IsTransformationCollection(coll) then
-    N := Maximum(N, DegreeOfTransformationCollection(coll));
-  elif not IsEmpty(coll) then
-    Error("Expected a transf. coll. or empty list, found ",
-          TNAM_OBJ(coll));
-  fi;
-  if N <= 16
+InstallMethod(FroidurePinMemFnRec, "for a transformation semigroup",
+[IsTransformationSemigroup],
+function(S)
+  if DegreeOfTransformationSemigroup(S) <= 16
       and IsBound(LIBSEMIGROUPS_HPCOMBI_ENABLED) then
     return libsemigroups.FroidurePinTransf16;
-  elif N <= 2 ^ 16 then
+  elif DegreeOfTransformationSemigroup(S) <= 2 ^ 16 then
     return libsemigroups.FroidurePinTransfUInt2;
-  elif N <= 2 ^ 32 then
+  elif DegreeOfTransformationSemigroup(S) <= 2 ^ 32 then
     return libsemigroups.FroidurePinTransfUInt4;
   else
     # Cannot currently test the next line
@@ -82,21 +65,12 @@ function(S, coll)
   fi;
 end);
 
-InstallMethod(FroidurePinMemFnRec,
-"for a partial perm. semigroup and list or coll.",
-[IsPartialPermSemigroup, IsListOrCollection],
-function(S, coll)
+InstallMethod(FroidurePinMemFnRec, "for a partial perm semigroup",
+[IsPartialPermSemigroup],
+function(S)
   local N;
   N := Maximum(DegreeOfPartialPermSemigroup(S),
                CodegreeOfPartialPermSemigroup(S));
-  if IsPartialPermCollection(coll) then
-    N := Maximum(N,
-                 DegreeOfPartialPermCollection(coll),
-                 CodegreeOfPartialPermCollection(coll));
-  elif not IsEmpty(coll) then
-    Error("Expected a partial perm. coll. or empty list, found ",
-          TNAM_OBJ(coll));
-  fi;
   if N <= 16 and IsBound(LIBSEMIGROUPS_HPCOMBI_ENABLED) then
     return libsemigroups.FroidurePinPPerm16;
   elif N <= 2 ^ 16 then
@@ -676,15 +650,24 @@ function(S)
 
   enum := rec();
 
-  enum.NumberElement := {enum, x} -> PositionSortedOp(S, x);
+    # TODO S should be stored in enum, and then used below
+  enum.NumberElement := function(_, x)
+    return PositionSortedOp(S, x);
+  end;
 
-  enum.ElementNumber := {enum, nr} -> sorted_at(T, nr - 1);
+  enum.ElementNumber := function(_, nr)
+    return sorted_at(T, nr - 1);
+  end;
 
   enum.Length := enum -> Size(S);
 
-  enum.Membership := {x, enum} -> PositionCanonical(S, x) <> fail;
+  enum.Membership := function(x, _)
+    return PositionCanonical(S, x) <> fail;
+  end;
 
-  enum.IsBound\[\] := {enum, nr} -> nr <= Size(S);
+  enum.IsBound\[\] := function(_, nr)
+    return nr <= Size(S);
+  end;
 
   enum := EnumeratorByFunctions(S, enum);
   SetIsSemigroupEnumerator(enum, true);
@@ -711,7 +694,8 @@ function(S)
 
   enum := rec();
 
-  enum.NumberElement := {enum, x} -> PositionCanonical(S, x);
+  # TODO S should be stored in enum and used in NumberElement
+  enum.NumberElement := {_, x} -> PositionCanonical(S, x);
 
   if IsFpSemigroup(S) or IsFpMonoid(S) or IsQuotientSemigroup(S) then
     factorisation := FroidurePinMemFnRec(S).minimal_factorisation;
@@ -733,7 +717,7 @@ function(S)
     end;
   fi;
 
-  # TODO shouldn't S be stored in enum?
+  # TODO S should be stored in enum and used in Length
   enum.Length := function(_)
     if not IsFinite(S) then
       return infinity;
@@ -742,8 +726,10 @@ function(S)
     fi;
   end;
 
+  # TODO S should be stored in enum and used in Membership
   enum.Membership := {x, enum} -> PositionCanonical(S, x) <> fail;
 
+  # TODO S should be stored in enum and used in IsBound
   enum.IsBound\[\] := {enum, nr} -> nr <= Size(S);
 
   enum := EnumeratorByFunctions(S, enum);
@@ -864,12 +850,14 @@ function(Constructor, S, coll, opts)
   coll := Shuffle(coll);
   if IsGeneratorsOfActingSemigroup(coll) then
     n := ActionDegree(coll);
-    Sort(coll, {x, y} -> ActionRank(x, n) > ActionRank(y, n));
+    Sort(coll, function(x, y)
+                 return ActionRank(x, n) > ActionRank(y, n);
+               end);
   elif Length(coll) < 120 then
     Sort(coll, IsGreensDGreaterThanFunc(Semigroup(coll)));
   fi;
 
-  R := FroidurePinMemFnRec(S, coll);
+  R := FroidurePinMemFnRec(S);
 
   # Perform the closure
   if IsPartialPermSemigroup(S) or IsTransformationSemigroup(S) then
@@ -884,6 +872,8 @@ function(Constructor, S, coll, opts)
     fi;
     if M > N then
       # Can't use closure, TODO(later) use copy_closure
+      # FIXME(later) if M goes larger than the type of R can support this will
+      # end badly
       CppT  := R.make();
       add_generator := R.add_generator;
       for x in GeneratorsOfSemigroup(S) do

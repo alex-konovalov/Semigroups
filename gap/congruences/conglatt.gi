@@ -169,13 +169,13 @@ BindGlobal("WrappedTwoSidedCongruenceType",
                    IsWrappedTwoSidedCongruence and IsPositionalObjectRep));
 
 BindGlobal("WrappedLeftCongruence",
-x -> Objectify(WrappedLeftCongruenceType, [x]));
+x -> Objectify(WrappedLeftCongruenceType, [x]);
 
 BindGlobal("WrappedRightCongruence",
-x -> Objectify(WrappedRightCongruenceType, [x]));
+x -> Objectify(WrappedRightCongruenceType, [x]);
 
-BindGlobal("WrappedTwoSidedCongruence",
-x -> Objectify(WrappedTwoSidedCongruenceType, [x]));
+InstallGlobalFunction(WrappedTwoSidedCongruence,
+x -> Objectify(WrappedTwoSidedCongruence, [x]);
 
 InstallMethod(\=, "for wrapped left, right, or 2-sided congruences",
 [IsWrappedLeftRightOrTwoSidedCongruence,
@@ -227,12 +227,12 @@ InstallMethod(One, "for wrapped 2-sided semigroup congruence",
 [IsWrappedTwoSidedCongruence],
 x -> WrappedTwoSidedCongruence(TrivialCongruence(Source(x![1]))));
 
-BindGlobal("_ClosureLattice",
+InstallGlobalFunction(_ClosureLattice,
 function(S, gen_congs, WrappedXCongruence)
   local gens, poset, all_congs, old_value, U;
 
   # Trivial case
-  if IsEmpty(gen_congs) then
+  if Length(gen_congs) = 0 then
     return SEMIGROUPS.MakeCongruencePoset(Digraph([[1]]),
                                           [TrivialCongruence(S)]);
   fi;
@@ -246,10 +246,10 @@ function(S, gen_congs, WrappedXCongruence)
     S := List(gen_congs, EquivalenceRelationLookup);
     old_value := libsemigroups.should_report();
     if InfoLevel(InfoSemigroups) = 4 then
-      libsemigroups.set_report(true);
+        LIBSEMIGROUPS_REPORTING_ENABLED(true);
     fi;
     poset := DigraphNC(libsemigroups.LATTICE_OF_CONGRUENCES(S));
-    libsemigroups.set_report(old_value);
+    LIBSEMIGROUPS_REPORTING_ENABLED(old_value);
     all_congs := fail;
   fi;
   Info(InfoSemigroups, 1, StringFormatted("Found {} congruences in total!",
@@ -772,8 +772,8 @@ InstallMethod(PosetOfPrincipalCongruences,
 InstallMethod(PosetOfPrincipalRightCongruences,
 "for a semigroup and list or collection",
 [IsSemigroup, IsListOrCollection],
-{S, pairs}
--> PosetOfCongruences(PrincipalRightCongruencesOfSemigroup(S, pairs)));
+{S, pairs} -> PosetOfCongruences(PrincipalRightCongruencesOfSemigroup(S,
+                                                                      pairs)));
 
 InstallMethod(PosetOfPrincipalLeftCongruences,
 "for a semigroup and list or collection",

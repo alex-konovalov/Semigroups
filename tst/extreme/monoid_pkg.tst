@@ -68,9 +68,7 @@ Transformation( [ 1, 1, 1, 1, 1, 1, 1, 1 ] )
 gap> MultiplicativeZero(s) in i;
 true
 gap> h := List(GreensDClasses(s), GroupHClass);;
-gap> h := List(h, StructureDescription);;
-gap> Sort(h);
-gap> h;
+gap> h := Set(h, StructureDescription);
 [ "1", "1", "C3", "C3" ]
 gap> IsCliffordSemigroup(s);
 true
