@@ -9,3 +9,5 @@
 ##
 
 DeclareAttribute("PositionsInSupersemigroup", IsSemigroupIdeal);
+DeclareAttribute("PositionsInSupersemigroup", IsLeftSemigroupIdeal);
+DeclareAttribute("PositionsInSupersemigroup", IsRightSemigroupIdeal);

@@ -20,8 +20,8 @@ gap> SEMIGROUPS.StartTest();
 
 # Test SupersemigroupOfIdeal
 gap> S := RegularBooleanMatMonoid(3);;
-gap> I := SemigroupIdeal(S, 
->                        Matrix(IsBooleanMat, 
+gap> I := SemigroupIdeal(S,
+>                        Matrix(IsBooleanMat,
 >                               [[1, 1, 1], [1, 0, 1], [1, 1, 1]]));
 <semigroup ideal of 3x3 boolean matrices with 1 generator>
 gap> J := MinimalIdeal(I);
@@ -35,8 +35,8 @@ true
 
 # Test PrintString
 gap> S := RegularBooleanMatMonoid(3);;
-gap> I := SemigroupIdeal(S, 
->                        Matrix(IsBooleanMat, 
+gap> I := SemigroupIdeal(S,
+>                        Matrix(IsBooleanMat,
 >                               [[1, 1, 1], [1, 0, 1], [1, 1, 1]]));
 <semigroup ideal of 3x3 boolean matrices with 1 generator>
 gap> PrintString(I);
@@ -133,34 +133,54 @@ false
 gap> S = MinimalIdeal(S);
 false
 
-# Test SemigroupIdeal (the function)
+# Test SEMIGROUPS.AnySemigroupIdealInputParsing
+gap> SEMIGROUPS.AnySemigroupIdealInputParsing();
+Error, there must be 2 or more arguments
+gap> SEMIGROUPS.AnySemigroupIdealInputParsing(6330);
+Error, there must be 2 or more arguments
+gap> S := RegularBooleanMatMonoid(2);;
+gap> SEMIGROUPS.AnySemigroupIdealInputParsing(S);
+Error, there must be 2 or more arguments
+gap> SEMIGROUPS.AnySemigroupIdealInputParsing(S, [S.1, S.2]);
+[ <monoid of 2x2 boolean matrices with 3 generators>, 
+  [ Matrix(IsBooleanMat, [[0, 1], [1, 0]]), 
+      Matrix(IsBooleanMat, [[1, 0], [0, 0]]) ] ]
+gap> SEMIGROUPS.AnySemigroupIdealInputParsing(S, NullDigraph(2));
+Error, invalid arguments
+gap> I := SemigroupIdeal(S, []);
+Error, the 2nd argument is not a combination of generators, lists of generator\
+s, nor semigroups
+
+# Test SemigroupIdeal, LeftSemigroupIdeal, RightSemigroupIdeal (the function)
 gap> SemigroupIdeal("a");
 Error, there must be 2 or more arguments
-gap> S := RegularBooleanMatMonoid(1);;
-gap> SemigroupIdeal(S);
+gap> LeftSemigroupIdeal("314159265358979");
+Error, there must be 2 or more arguments
+gap> RightSemigroupIdeal(5);
 Error, there must be 2 or more arguments
 gap> S := Semigroup([[Z(2)]]);
 <trivial group with 1 generator>
 gap> SemigroupIdeal(S, S.1);
 <commutative inverse semigroup ideal with 1 generator>
+gap> LeftSemigroupIdeal(S, S.1);
+<LeftMagmaIdeal with 1 generator>
+gap> RightSemigroupIdeal(S, S.1);
+<RightMagmaIdeal with 1 generator>
 gap> S := RegularBooleanMatMonoid(2);;
 gap> I := SemigroupIdeal(S, [S.1, S.2]);
 <semigroup ideal of 2x2 boolean matrices with 2 generators>
 gap> J := SemigroupIdeal(S, I, S.3);
 <semigroup ideal of 2x2 boolean matrices with 3 generators>
+gap> I := LeftSemigroupIdeal(S, [S.1, S.2]);
+<LeftMagmaIdeal with 2 generators>
+gap> I := RightSemigroupIdeal(S, [S.1, S.2]);
+<RightMagmaIdeal with 2 generators>
 gap> I := SemigroupIdeal(S, [S.1, S.2], rec());
 <semigroup ideal of 2x2 boolean matrices with 2 generators>
 gap> I := SemigroupIdeal(S, MaximalDClasses(S)[1]);
 <semigroup ideal of 2x2 boolean matrices with 2 generators>
-gap> I := SemigroupIdeal(S, []);
-Error, the 2nd argument is not a combination of generators, lists of generator\
-s, nor semigroups
-gap> SemigroupIdeal();
-Error, there must be 2 or more arguments
-gap> SemigroupIdeal(S, NullDigraph(2));
-Error, invalid arguments
 
-# Test SemigroupIdealByGenerators
+# Test SEMIGROUPS.AnySemigroupIdealByGenerators4
 gap> S := RegularBooleanMatMonoid(1);;
 gap> T := RegularBooleanMatMonoid(2);;
 gap> SemigroupIdeal(S, T.1);
@@ -200,7 +220,7 @@ gap> I := SemigroupIdeal(S, S.1);
 gap> MinimalIdealGeneratingSet(I);
 [ Transformation( [ 2, 3, 1 ] ) ]
 gap> S := RegularBooleanMatMonoid(3);;
-gap> I := SemigroupIdeal(S, 
+gap> I := SemigroupIdeal(S,
 >  Matrix(IsBooleanMat, [[1, 1, 1], [1, 1, 0], [1, 0, 1]]),
 >  Matrix(IsBooleanMat, [[1, 1, 1], [1, 1, 0], [0, 0, 1]]),
 >  Matrix(IsBooleanMat, [[1, 0, 0], [0, 1, 1], [1, 0, 1]]),
@@ -218,7 +238,7 @@ gap> MinimalIdealGeneratingSet(I);
 
 # Test InversesOfSemigroupElementNC
 gap> S := RegularBooleanMatMonoid(3);;
-gap> I := SemigroupIdeal(S, 
+gap> I := SemigroupIdeal(S,
 >  Matrix(IsBooleanMat, [[1, 1, 1], [1, 1, 0], [1, 0, 1]]),
 >  Matrix(IsBooleanMat, [[1, 1, 1], [1, 1, 0], [0, 0, 1]]),
 >  Matrix(IsBooleanMat, [[1, 0, 0], [0, 1, 1], [1, 0, 1]]),
@@ -256,8 +276,8 @@ gap> I := SemigroupIdeal(T, z);;
 gap> IsCommutativeSemigroup(I);
 true
 gap> S := RegularBooleanMatMonoid(3);;
-gap> I := SemigroupIdeal(S, 
-> [Matrix(IsBooleanMat, [[0, 1, 0], [1, 0, 1], [1, 1, 0]]), 
+gap> I := SemigroupIdeal(S,
+> [Matrix(IsBooleanMat, [[0, 1, 0], [1, 0, 1], [1, 1, 0]]),
 >  Matrix(IsBooleanMat, [[1, 0, 0], [1, 1, 0], [1, 0, 1]])]);;
 gap> IsCommutativeSemigroup(I);
 false
@@ -327,7 +347,7 @@ gap> ideals := Ideals(S);;
 gap> Size(ideals);
 1
 gap> S := Semigroup([
->           Bipartition([[1, 2, -1, -4], [3, -5], [4], [5, -2], [-3]]), 
+>           Bipartition([[1, 2, -1, -4], [3, -5], [4], [5, -2], [-3]]),
 >           Bipartition([[1, 2, 4, -3, -5], [3, -4], [5, -1, -2]]),
 >           Bipartition([[1, 2, 5, -3, -4], [3, 4, -1, -2], [-5]])]);;
 gap> ideals := Ideals(S);;

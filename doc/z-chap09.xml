@@ -29,6 +29,8 @@
     </Heading>
 
     <#Include Label = "SemigroupIdeal">
+    <#Include Label = "LeftSemigroupIdeal">
+    <#Include Label = "RightSemigroupIdeal">
     <#Include Label = "Ideals">
   </Section>
 

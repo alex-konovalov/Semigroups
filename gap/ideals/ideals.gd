@@ -7,15 +7,21 @@
 ##
 #############################################################################
 
-DeclareSynonymAttr("GeneratorsOfSemigroupIdeal", GeneratorsOfMagmaIdeal);
+DeclareSynonymAttr("GeneratorsOfSemigroupIdeal",
+  GeneratorsOfMagmaIdeal);
+DeclareSynonymAttr("GeneratorsOfLeftSemigroupIdeal",
+  GeneratorsOfLeftMagmaIdeal);
+DeclareSynonymAttr("GeneratorsOfRightSemigroupIdeal",
+  GeneratorsOfRightMagmaIdeal);
+
 DeclareGlobalFunction("SemigroupIdeal");
+DeclareGlobalFunction("LeftSemigroupIdeal");
+DeclareGlobalFunction("RightSemigroupIdeal");
 
 DeclareOperation("SemigroupIdealByGenerators",
                  [IsSemigroup, IsListOrCollection]);
-
 DeclareOperation("SemigroupIdealByGenerators",
                  [IsSemigroup, IsListOrCollection, IsRecord]);
-
 DeclareOperation("SemigroupIdealByGeneratorsNC",
                  [IsSemigroup, IsListOrCollection, IsRecord]);
 

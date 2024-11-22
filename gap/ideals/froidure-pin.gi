@@ -39,6 +39,48 @@ function(I)
   return result;
 end);
 
+InstallMethod(PositionsInSupersemigroup,
+"for a left semigroup ideal with known generators",
+[IsLeftSemigroupIdeal and HasGeneratorsOfSemigroupIdeal and
+ CanUseFroidurePin],
+function(I)
+  local S, L, result, pos, x;
+  S := SupersemigroupOfIdeal(I);
+  L := LeftCayleyDigraph(S);
+
+  result := [];
+  for x in GeneratorsOfSemigroupIdeal(I) do
+    pos := PositionCanonical(S, x);
+    if not pos in result then
+      AddSet(result, pos);
+      UniteSet(result, VerticesReachableFrom(L, pos));
+    fi;
+  od;
+
+  return result;
+end);
+
+InstallMethod(PositionsInSupersemigroup,
+"for a right semigroup ideal with known generators",
+[IsRightSemigroupIdeal and HasGeneratorsOfSemigroupIdeal and
+ CanUseFroidurePin],
+function(I)
+  local S, R, result, pos, x;
+  S := SupersemigroupOfIdeal(I);
+  R := RightCayleyDigraph(S);
+
+  result := [];
+  for x in GeneratorsOfSemigroupIdeal(I) do
+    pos := PositionCanonical(S, x);
+    if not pos in result then
+      AddSet(result, pos);
+      UniteSet(result, VerticesReachableFrom(R, pos));
+    fi;
+  od;
+
+  return result;
+end);
+
 InstallMethod(GeneratorsOfInverseSemigroup,
 "for an inverse semigroup ideal with inverse op and generators",
 [IsSemigroupIdeal and IsInverseSemigroup
