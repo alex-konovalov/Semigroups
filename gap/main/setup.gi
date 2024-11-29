@@ -1092,3 +1092,29 @@ InstallMethod(WeakInverse, "for a partial perm",
 
 InstallMethod(WeakInverse, "for a bipartition",
 [IsBipartition], Star);
+
+InstallMethod(WeakInverse, "for a matrix over ff",
+[IsMatrixObjOverFiniteField], RightInverse);
+
+InstallMethod(WeakInverse, "for a McAlister triple semigroup element",
+[IsMcAlisterTripleSemigroupElement], INV);
+
+InstallMethod(WeakInverse, "for a Rees 0-matrix semigroup",
+[IsReesZeroMatrixSemigroupElement],
+function(x)
+  local R, mat, i, j, k, l;
+
+  R := ReesMatrixSemigroupOfFamily(FamilyObj(x));
+  if IsMultiplicativeZero(R, x) then
+    return x;
+  fi;
+
+  mat := Matrix(R);
+  i := x[1];
+  j := x[3];
+
+  k := First(Rows(R), k -> mat[j][k] <> 0);
+  l := First(Columns(R), l -> mat[l][i] <> 0);
+
+  return RMSElement(R, k, mat[j][k] ^ -1 * x[2] ^ -1 * mat[l][i] ^ -1, l);
+end);
