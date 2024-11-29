@@ -122,6 +122,7 @@ ReadPackage("semigroups", "gap/attributes/isorms.gd");
 ReadPackage("semigroups", "gap/attributes/maximal.gd");
 ReadPackage("semigroups", "gap/attributes/properties.gd");
 ReadPackage("semigroups", "gap/attributes/homomorph.gd");
+ReadPackage("semigroups", "gap/attributes/sandwich.gd");
 ReadPackage("semigroups", "gap/attributes/semifp.gd");
 ReadPackage("semigroups", "gap/attributes/translat.gd");
 ReadPackage("semigroups", "gap/attributes/rms-translat.gd");
