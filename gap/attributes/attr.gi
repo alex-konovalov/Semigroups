@@ -1105,6 +1105,166 @@ function(S)
     end;
 end);
 
+SEMIGROUPS.ExistsTransversal := function(a, b, n)
+    local exists, class, i;
+    if DegreeOfTransformation(a) > n or
+        DegreeOfTransformation(b) > n then
+        ErrorNoReturn("Transformation does not",
+        "belong to a transformation semigroup of degree n");
+    fi;
+    for class in KernelOfTransformation(a, n) do
+        exists := false;
+        for i in [1 .. Size(class)] do
+            if class[i] ^ a = class[i] ^ b then
+                exists := true;
+                break;
+            fi;
+        od;
+        if not exists then
+            return false;
+        fi;
+    od;
+    return true;
+end;
+
+InstallMethod(RegularLeqTransformationSemigroupNC,
+#intended for internal use; see MitschLeqSemigroup for public use
+"for a transformation semigroup",
+[IsTransformationSemigroup],
+function(S)
+    local deg;
+    deg := DegreeOfTransformationSemigroup(S);
+    return
+        function(x, y)
+            # Only returns the correct answer if y is a regular element
+            return IsRefinementKernelOfTransformation(x, y, deg)
+             and SEMIGROUPS.ExistsTransversal(x, y, deg);
+        end;
+end);
+
+InstallMethod(MitschLeqSemigroupNC,
+"for a semigroup",
+[IsSemigroup],
+function(S)
+    return 
+        function(x, y)
+            if x = y then
+                return true;
+            else
+                return ForAny(Elements(S), s -> x = x * s and x = y * s) and
+                    ForAny(Elements(S), t -> t * y = x and t * x = x);
+            fi;
+        end;
+end);
+
+InstallMethod(MitschLeqSemigroup,
+"for a semigroup",
+[IsSemigroup],
+function(S)
+    if IsInverseSemigroup(S) then
+        return NaturalLeqInverseSemigroup(S);
+    elif IsRegularSemigroup(S) and IsTransformationSemigroup(S) then
+        return RegularLeqTransformationSemigroupNC(S);
+    elif IsRegularSemigroup(S) then
+        return NambooripadLeqRegularSemigroup(S);
+    else 
+        return MitschLeqSemigroupNC(S);
+    fi;
+end);
+
+InstallMethod(MitschOrderOfSemigroup,
+"for a finite transformation semigroup",
+[IsTransformationSemigroup],
+function(S)
+    local elts, p, func1, func2, out, i, j, regular, D, a;
+    elts := ShallowCopy(AsListCanonical(S));
+    p    := Sortex(elts, {x, y} -> IsGreensDGreaterThanFunc(S)(y, x)) ^ -1;
+    func1 := RegularLeqTransformationSemigroupNC(S);
+    func2 := MitschLeqSemigroupNC(S);
+    out  := List([1 .. Size(S)], x -> []);
+    regular := BlistList([1 .. Size(S)], []);
+    for D in RegularDClasses(S) do
+        for a in D do
+            i := PositionCanonical(S, a) ^ (p ^ -1);
+            regular[i] := true;
+        od;
+    od;
+    for j in [Size(S), Size(S) - 1 .. 1] do
+        if regular[j] then
+            for i in [j - 1, j - 2 .. 1] do
+                if func1(elts[i], elts[j]) then
+                    AddSet(out[j ^ p], i ^ p);
+                fi;
+            od;
+        else
+            for i in [j - 1, j - 2 .. 1] do
+                if func2(elts[i], elts[j]) then
+                    AddSet(out[j ^ p], i ^ p);
+                fi;
+            od;
+        fi;
+    od;
+    return out;
+end);
+
+InstallMethod(MitschOrderOfSemigroup,
+"for a finite regular transformation semigroup",
+[IsRegularSemigroup and IsTransformationSemigroup],
+function(S)
+    local elts, p, func, out, i, j; 
+    elts := ShallowCopy(Elements(S));
+    p    := Sortex(elts, {x, y} -> IsGreensDGreaterThanFunc(S)(y, x)) ^ -1;
+    func := RegularLeqTransformationSemigroupNC(S);
+    out  := List([1 .. Size(S)], x -> []);
+    for i in [1 .. Size(S)] do
+        for j in [i + 1 .. Size(S)] do
+            if func(elts[i], elts[j]) then
+                AddSet(out[j ^ p], i ^ p);
+            fi;
+        od;
+    od;
+    return out;
+end);
+
+InstallMethod(MitschOrderOfSemigroup,
+"for a finite semigroup",
+[IsFinite and IsSemigroup],
+function(S)
+    local i, iso, T, MT, MS, eltsS, eltsT, idx_map, q;
+    iso := IsomorphismTransformationSemigroup(S);
+    T := Range(iso);
+    eltsS := Elements(S);
+    eltsT := Elements(T);
+    idx_map := List([1 .. Size(S)], i -> Position(eltsT, eltsS[i] ^ iso));
+    q := PermList(idx_map);
+    MT := MitschOrderOfSemigroup(T);
+    MS := [];
+    for i in [1 .. Size(S)] do
+        MS[i] := AsSet(OnTuples(MT[i ^ q], q ^ -1));
+    od;
+    return MS;
+end);
+
+InstallMethod(DumbMitschOrderOfSemigroup,
+"for a finite semigroup",
+[IsSemigroup and IsFinite],
+function(S)
+    local func, out, i, j, elts;
+    func := MitschLeqSemigroup(S);
+    elts := Elements(S);
+    out  := List([1 .. Size(S)], x -> []);
+    for i in [1 .. Size(S)] do
+        for j in [1 .. Size(S)] do
+            if i = j then
+                continue;
+            elif func(elts[i], elts[j]) then
+                AddSet(out[j], i);
+            fi;
+        od;
+    od;
+    return out;
+end);
+
 InstallMethod(LeftIdentity,
 "for semigroup with CanUseFroidurePin and mult. elt.",
 [IsSemigroup and CanUseFroidurePin, IsMultiplicativeElement],

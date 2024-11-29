@@ -1345,6 +1345,41 @@ true]]></Example>
 </ManSection>
 <#/GAPDoc>
 
+<#GAPDoc Label="MitschOrderOfSemigroup">
+<ManSection>
+<Attr Name="MitschOrderOfSemigroup" Arg="S"/>
+  <Returns>The Mitsch partial order on a semigroup.</Returns>
+  <Description>
+    The <E>Mitsch partial order</E> <M>\leq</M> on a semigroup <A>S</A> 
+    is defined by <C>a</C><M>\leq</M><C>b</C> if there exists <C>s</C> and
+    <C>t</C> in <M>S^1</M> such that
+    <C>tb</C><M>=</M><C>ta</C><M>=</M><C>a</C><M>=</M><C>as</C><M>=</M><C>bs</C>.
+    <C>MitschOrderOfSemigroup</C> returns the Mitsch partial order on the
+    semigroup <A>S</A> as a list of sets of positive integers where
+    entry <C>i</C> in <C>MitschOrderOfSemigroup(<A>S</A>)</C> is the set of
+    positions in <C>Elements(<A>S</A>)</C> of elements which are less than
+    <C>Elements(<A>S</A>)[i]</C>. See also <Ref
+      Func="MitschLeqOfSemigroup"/>.
+    <Example><![CDATA[
+gap> S := BrauerMonoid(3);
+<regular bipartition *-monoid of degree 3 with 3 generators>
+gap> IsRegularSemigroup(S);
+true
+gap> Size(S);
+15
+gap> NambooripadPartialOrder(S);
+[ [  ], [  ], [  ], [  ], [  ], [  ], [  ], [  ], [  ],
+  [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ], [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
+  [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ], [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
+  [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ], [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ] ]
+gap> NambooripadLeqRegularSemigroup(S)(Elements(S)[3], Elements(S)[9]);
+false
+gap> NambooripadLeqRegularSemigroup(S)(Elements(S)[2], Elements(S)[15]);
+true]]></Example>
+  </Description>
+</ManSection>
+<#/GAPDoc>
+
 <#GAPDoc Label="SmallerDegreeTransformationRepresentation">
 <ManSection>
 <Attr Name="SmallerDegreeTransformationRepresentation" Arg="S"/>

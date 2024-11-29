@@ -11,6 +11,7 @@
 #@local B, BruteForceInverseCheck, BruteForceIsoCheck, C, CC, D, DP, F
 #@local LoopIterator, M, Noop, R, S, S1, S2, T, TC, TestIterator, W, WW, acting
 #@local coll, gr, inv, iso, iter1, iter2, len, list, map, n, rels, valid, x, y
+#@local a, b
 gap> START_TEST("Semigroups package: standard/semigroups/semitrans.tst");
 gap> LoadPackage("semigroups", false);;
 
@@ -2752,6 +2753,19 @@ Error, the argument (a semigroup) is not finite
 gap> IsomorphismTransformationSemigroup(MinimalIdeal(FreeBand(2)));
 <simple semigroup ideal of size 4, with 1 generator> -> 
 <transformation semigroup of size 4, degree 5 with 3 generators>
+
+# IsRefinementOfKernelTransformation
+gap> a := Transformation([2,4,3,2]);
+Transformation( [ 2, 4, 3, 2 ] )
+gap> b := Transformation([3,3,1,3]);
+Transformation( [ 3, 3, 1, 3 ] )
+gap> IsRefinementKernelOfTransformation(a, b, 4);
+false
+gap> IsRefinementKernelOfTransformation(b, a, 4);
+true
+gap> IsRefinementKernelOfTransformation(b, a, 3);
+Error, Degree of the first transformation greater than 3.
+Expecting a degree at most n, found 4 instead.
 
 #
 gap> SEMIGROUPS.StopTest();
